@@ -1,0 +1,64 @@
+<style type="text/css">
+table.results td {
+	max-width: 100px;
+	overflow: hidden;
+}
+
+#everything.content {
+	width: inherit;
+	min-width: 1024px;
+}
+</style>
+
+<%= make_home_path %>
+<div class="tab_content">
+	<p id="notice"><%= notice %></p>
+	<h2>Search Results</h2>
+<% columns = infer_search_columns(@results[:hits]) %>
+<div class="result_total">Total found: <%= number_with_delimiter(@results[:total]) %></div>
+  <%= make_xml_path(request.fullpath) %><br/>
+  <%= make_json_path(request.fullpath) %>
+<h2><div class="expander" data-target="search"></div>Results</h2>
+<div id="search" class="exp_target hidden">
+<table class="results">
+	<tr>
+		<% columns.each { |col| %>
+		<th><%= col %></th>
+		<% } %>
+	</tr>
+	<% @results[:hits].each { |hit| %>
+	<tr>
+		<% columns.each { |col| %>
+		<td><span title="<%= hit[col] %>"><%= hit[col] %></span></td>
+		<% } %>
+	</tr>
+	<% } %>
+</table>
+</div>
+
+<h2><div class="expander" data-target="facets"></div>Facets</h2>
+<div id="facets" class="exp_target hidden">
+<% @results[:facets].each { |facet_name, facet_list| %>
+<h3><div class="expander" data-target="<%= facet_name.gsub(/\W/, '') %>"></div><%= facet_name %></h3>
+<div id="<%= facet_name.gsub(/\W/, '') %>" class="exp_target hidden">
+<table class="results">
+	<tr>
+		<th>Facet</th>
+		<th>Count</th>
+	</tr>
+	<% facet_list.each { |facet| %>
+	<tr>
+		<td><%= facet[:name] %></td>
+		<td><%= number_with_delimiter(facet[:count]) %></td>
+        <% if facet.has_key?( :pivots ) %>
+           <% facet[:pivots].each do | name, pivots | %>
+              <td><h3><div class="expander" data-target="<%= name %>"></div><%= name %></h3></td>
+          <% end %>
+        <% end %>
+    </tr>
+	<% } %>
+</table>
+</div>
+<% } %>
+</div>
+</div>

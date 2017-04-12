@@ -1,0 +1,67 @@
+# This contains all the site specific information (outside of database.yml) that should not be checked into version control.
+# It is read in by environment.rb.
+
+#
+# It must contain the following fields:
+#
+
+##########################
+### EMAIL
+##########################
+
+# The url that appears in emails. This should be whatever url the site is located at.
+smtp_settings:
+  return_path: http://example.com
+
+##########################
+### SKIN
+##########################
+
+my_collex_url: 'my_collex'
+skin: 'nines'
+
+disallow_rss: false
+page_search: false
+
+##########################
+### PLUGINS
+##########################
+
+plugins:
+  typewright: true
+  awl: true
+
+awl:
+  service_url: http://typewright.performantsoftware.com/awl
+
+typewright:
+  web_service_url: 'http://typewright.performantsoftware.com/'
+  image_url: 'http://typewright.performantsoftware.com/uploaded'
+  private_token: 'super-secret'
+
+##########################
+### SYSTEM
+##########################
+
+# this is the path where the "identify" program is located.
+paperclip:
+  image_magic_path: '/opt/local/bin'
+
+# Should experimental features be activated?
+bleeding_edge: false
+
+daemons:
+  mailer_interval_secs: 20
+  user_content_interval_secs: 600
+
+##########################
+### CAPISTRANO
+##########################
+
+capistrano:
+  edge:
+    user: 'user-name-to-login-to-server'
+    ssh_name: 'ssh-name-to-login-to-server'
+    ruby: 'ruby-2.1.2'
+    system_rvm: false
+    deploy_base: '/full/path/to/folder/that/all/web/apps/are/deployed/to'

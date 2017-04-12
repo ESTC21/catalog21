@@ -1,0 +1,42 @@
+<%= make_home_path %>
+<div class="tab_content">
+	<p id="notice"><%= notice %></p>
+	<h2>All Federations</h2>
+  <%= make_xml_path(request.fullpath) %><br/>
+  <%= make_json_path(request.fullpath) %>
+
+	<table class="results">
+	  <tr>
+		  <th>Name</th>
+		  <th>Thumbnail</th>
+		  <th>Site</th>
+	<% if user_signed_in? %>
+		  <th>IP</th>
+		<th></th>
+		<th></th>
+		<th></th>
+	<% end %>
+	  </tr>
+
+	<% @federations.each do |federation| %>
+	  <tr>
+		  <td><%= federation.name %></td>
+		  <td><%= image_tag federation.thumbnail.url(:thumb) %></td>
+		  <td><%= federation.site %></td>
+	<% if user_signed_in? %>
+	    <td><%= federation.ip %></td>
+		<td><%= link_to 'Show', federation %>&nbsp;
+		<%= link_to 'Edit', edit_federation_path(federation) %>&nbsp;
+		<%= link_to 'Destroy', federation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+        </td>
+	<% end %>
+	  </tr>
+	<% end %>
+	</table>
+
+	<% if user_signed_in? %>
+	    <br />
+	    <%= link_to 'New Federation', new_federation_path %>
+	<% end %>
+</div>

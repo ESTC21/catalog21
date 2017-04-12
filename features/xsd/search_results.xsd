@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="search">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="total" type="xs:nonNegativeInteger" />
+				<xs:element name="results">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="result" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="uri" type="xs:token"/>
+										<xs:element name="title" type="xs:token" minOccurs="0"/>
+										<xs:element name="federation" type="arrayType" minOccurs="0"/>
+										<xs:element name="archive" type="xs:token" minOccurs="0"/>
+										<xs:element name="genre" type="arrayType" minOccurs="0"/>
+										<xs:element name="source" type="arrayType" minOccurs="0"/>
+										<xs:element name="url" type="xs:token" minOccurs="0"/>
+										<xs:element name="role_edt" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_pbl" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_aut" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_art" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_trl" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_egr" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_etr" type="arrayType" minOccurs="0"/>
+										<xs:element name="role_cre" type="arrayType" minOccurs="0"/>
+										<xs:element name="date_label" type="arrayType" minOccurs="0"/>
+										<xs:element name="source_xml" type="xs:token" minOccurs="0"/>
+										<xs:element name="thumbnail" type="xs:token" minOccurs="0"/>
+										<xs:element name="alternative" type="arrayType" minOccurs="0"/>
+										<xs:element name="image" type="xs:token" minOccurs="0"/>
+										<xs:element name="text" type="xs:string" minOccurs="0"/>
+										<xs:element name="freeculture" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="is_ocr" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="has_full_text" type="xs:boolean" minOccurs="0"/>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="facets">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="genre" type="facetType" />
+							<xs:element name="archive" type="facetType" />
+							<xs:element name="freeculture" type="facetType" />
+							<xs:element name="has_full_text" type="facetType" />
+							<xs:element name="federation" type="facetType" />
+							<xs:element name="typewright" type="facetType" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="facetType">
+		<xs:sequence>
+			<xs:element name="facet" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="xs:string" />
+						<xs:element name="count" type="xs:nonNegativeInteger" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="arrayType">
+		<xs:sequence>
+			<xs:element name="value" type="xs:token" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

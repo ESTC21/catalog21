@@ -1,0 +1,35 @@
+<%= make_home_path %>
+<div class="tab_content">
+	<p id="notice"><%= notice %></p>
+	<h2>All Genres</h2>
+  <%= make_xml_path(request.fullpath) %><br/>
+  <%= make_json_path(request.fullpath) %>
+
+	<table class="results">
+	  <tr>
+		<th>Name</th>
+	<% if user_signed_in? %>
+		<th></th>
+		<th></th>
+		<th></th>
+	<% end %>
+	  </tr>
+
+	<% @genres.each do |genre| %>
+	  <tr>
+		<td><%= genre.name %></td>
+	<% if user_signed_in? %>
+		<td><%= link_to 'Show', genre %>&nbsp;
+		<%= link_to 'Edit', edit_genre_path(genre) %>&nbsp;
+		<%= link_to 'Destroy', genre, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+	<% end %>
+	  </tr>
+	<% end %>
+	</table>
+
+	<% if user_signed_in? %>
+	<br />
+
+	<%= link_to 'New Genre', new_genre_path %>
+	<% end %>
+</div>

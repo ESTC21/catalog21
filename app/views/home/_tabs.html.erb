@@ -1,0 +1,186 @@
+<p id="notice"><%= notice %></p>
+<p id="alert"><%= alert %></p>
+<div class="nav_outer">
+<ul class="nav<%= " narrow" if user_signed_in? %>">
+	<% curr_tab = params[:tab] ? params[:tab] : 'overview' %>
+	<%= tab_link("Overview", 'overview', curr_tab) %>
+	<%= tab_link("Totals", 'totals', curr_tab) %>
+	<%= tab_link("Search", 'search', curr_tab) %>
+	<%= tab_link("Autocomplete", 'autocomplete', curr_tab) %>
+	<%= tab_link("Names Faceting", 'names', curr_tab) %>
+	<%= tab_link("Details", 'uri', curr_tab) %>
+	<%= tab_link("Meta", 'meta', curr_tab) %>
+<% if user_signed_in? %>
+		<%= tab_link("Exhibits", 'exhibits', curr_tab) %>
+		<%= tab_link("User Content", 'user_content', curr_tab) %>
+		<%= tab_link("Indexing", 'indexing', curr_tab) %>
+<% end %>
+</ul>
+</div>
+<div class="tab_content">
+<% if params[:tab] == nil || params[:tab] == 'overview' %>
+<div id="tab_overview" class="individual_tab">
+    <h2>ARC Catalog</h2>
+	<p>The ARC Catalog is a collection of metadata about the objects aggregated by NINES, 18thConnect and MESA. Using the web service, you can query these files without using the Collex interface provided by those sites.</p>
+	<p>To use, call this in one of the ways indicated. It is designed to be used as a web service, but you can also type the
+		values into your browser to interactively test your parameters. If you leave off the ".xml" in the following calls,
+		the results will be formatted better for a browser.
+	</p>
+	<div class="special_notice">
+	<h3>The ARC Catalog offers metadata from free-culture resources only.</h3>
+	<p>
+		<%= link_to "NINES",  "http://www.nines.org/about/scholarship/other-resources/", { class: 'ext', target: '_blank' } %> and
+		<%= link_to "18thConnect", "http://www.18thconnect.org/about/community/major-contributors/", { class: 'ext', target: '_blank' } %>
+		have made agreements with a number of commercial providers to offer metadata and some full-text searching of their
+		materials through the Collex interface. The objects from these archives have been flagged in the
+		<%= link_to "metadata", "http://www.performantsoftware.com/nines_wiki/index.php/Submitting_RDF#.3Ccollex:freeculture.3E", { class: 'ext', target: '_blank' } %>
+		as proprietary, and will not be returned in queries submitted through the ARC Catalog.
+	</p>
+	<p>We will continue to revisit and review our agreements in the coming years, and post updates as the situation develops.</p>
+	</div>
+
+	<h3>Input format</h3>
+	<p>
+		Note that some characters are not allowed to be sent as part of a URL. If you want to use those characters they need
+		to be escaped using a % and the hex code of the character. For instance, a plus sign should be encoded as <span class="code">%2B</span>.
+	</p>
+	<ul>
+		<li>The input format follows the same syntax as URLs. In particular:</li>
+		<li>The query parameters begin with a question mark.</li>
+		<li>The query parameters are separated from each other with an ampersand (&amp;).</li>
+		<li>A query parameter contains two parts: a key, followed by an equal sign, followed by a value.</li>
+		<li>UTF-8 characters need to be escaped, so a query looks like: <span class="code">q=%2BBront%C3%AB</span> instead of the more natural: <span class="code">q=%2BBrontë</span> </li>
+		<li>The plus sign and a number of other symbols are used in a lot of places, and need to be escaped to be used in a URL. Here are some common substitutions:
+			<table class="ascii_table">
+				<tr><th>Character</th><th>Escape</th></tr>
+				<tr class='important'><td>space</td><td>+</td></tr>
+				<tr><td>#</td><td>%23</td></tr>
+				<tr><td>$</td><td>%24</td></tr>
+				<tr><td>%</td><td>%25</td></tr>
+				<tr><td>&amp;</td><td>%26</td></tr>
+				<tr><td>'</td><td>%27</td></tr>
+				<tr class='important'><td>+</td><td>%2B</td></tr>
+				<tr><td>.</td><td>%2E</td></tr>
+				<tr><td>/</td><td>%2F</td></tr>
+				<tr class='important'><td>:</td><td>%3A</td></tr>
+				<tr><td>;</td><td>%3B</td></tr>
+				<tr><td>&lt;</td><td>%3C</td></tr>
+				<tr><td>=</td><td>%3D</td></tr>
+				<tr><td>&gt;</td><td>%3E</td></tr>
+				<tr><td>?</td><td>%3F</td></tr>
+				<tr><td>@</td><td>%40</td></tr>
+				<tr><td>[</td><td>%5B</td></tr>
+				<tr><td>\</td><td>%5C</td></tr>
+				<tr><td>]</td><td>%5D</td></tr>
+				<tr><td>^</td><td>%5E</td></tr>
+				<tr><td>`</td><td>%60</td></tr>
+				<tr><td>{</td><td>%7B</td></tr>
+				<tr><td>|</td><td>%7C</td></tr>
+				<tr><td>}</td><td>%7D</td></tr>
+				<tr><td>~</td><td>%7E</td></tr>
+ 			</table>
+		</li>
+	</ul>
+</div>
+
+<% elsif params[:tab] == 'totals' %>
+<div id="tab_totals" class="individual_tab">
+	<h3>Totals</h3>
+	<p>This gives an overview of the number of documents and the number of archives that are in the catalog.</p>
+	<p>Call <%= example_link("/search/totals.xml") %> to get a list of all the federations and how many documents and archives they contain.</p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/totals.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'search' %>
+<div id="tab_search" class="individual_tab">
+	<h3>Full Text Searching</h3>
+	<p>Any field that is collected can be searched for, including the full text of the document.</p>
+	<p>Note: All searches are case-insensitive and punctuation cannot be searched for.</p>
+	<p>Call <span class="code">/search.xml</span> with the following parameters:</p>
+	<%= render :partial => 'params', :locals => { :params => @query_params } %>
+	<p>Example: Search for all mention of "tree" by Williams: <%= example_link("/search.xml?q=%2btree&aut=%2bWilliams") %></p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/search_results.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'autocomplete' %>
+<div id="tab_autocomplete" class="individual_tab">
+	<h3>Searching to Facilitate Auto-completion</h3>
+	<p>A query can be submitted character by character to allow you to prompt the user for queries that will succeed.
+		You can specify the number of items that you want to present, and the results will contain the number of hits
+		that the queries will generate.
+	</p>
+	<p>This is designed to be used to implement auto-complete functionality. Either the entire index can be searched with auto-complete
+		or you may search just a portion of the index by including other parameters.
+	</p>
+	<p>Call <span class="code">/search/autocomplete.xml</span> with the following parameters:</p>
+	<%= render :partial => 'params', :locals => { :params => @autocomplete_params } %>
+	<p>Example: Auto-complete "tre" (top 25 results): <%= example_link("/search/autocomplete.xml?frag=tre&max=25") %></p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/autocomplete_results.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'names' %>
+<div id="tab_names" class="individual_tab">
+	<h3>Names Faceting</h3>
+	<p>This is to get a list of all the names (authors, publishers, and editors) that are associated with a particular query.</p>
+	<p>Call <span class="code">/search/names.xml</span> with the following parameters:</p>
+	<%= render :partial => 'params', :locals => { :params => @names_params } %>
+	<p>Example: All authors, publishers, and editors who mention "tree" and Williams: <%= example_link("/search/names.xml?q=%2btree%2bWilliams") %></p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/names_results.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'uri' %>
+<div id="tab_uri" class="individual_tab">
+	<h3>Querying for a particular object.</h3>
+	<p>This is designed to get all the fields for a specific object if you already know what the object is. Usually it would be used if you had already done a search in the past.
+		You can save the uri from the first search, and retrieve the details later using this call.
+	</p>
+	<p>Call <span class="code">/search/details.xml</span> with the following parameters:</p>
+	<%= render :partial => 'params', :locals => { :params => @uri_params } %>
+	<p>Example: A document by Whitman: <%= example_link("/search/details.xml?uri=http%3a%2f%2fwww%2ewhitmanarchive%2eorg%2fcriticism%2freviews%2fleaves%2fleaves55%2fdailytimes") %></p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/search_results.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'meta' %>
+<div id="tab_meta" class="individual_tab">
+	<h3>Other information</h3>
+	<p>You can also get information about the items that make up the index with one of these calls:</p>
+	<p><%= example_link("/archives.xml") %> : To get a list of all the possible archives, and their parameters.</p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/meta_archives.xsd", { :class => 'example_link' } %></p>
+	<p><%= example_link("/genres.xml") %> : To get a list of all the possible genres</p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/meta_genres.xsd", { :class => 'example_link' } %></p>
+    <p><%= example_link("/disciplines.xml") %> : To get a list of all the possible disciplines</p>
+    <p>The output format is described in this <%= link_to "XSD", "/xsd/meta_disciplines.xsd", { :class => 'example_link' } %></p>
+	<p><%= example_link("/federations.xml") %> : To get a list of all the possible federations, and their thumbnails.</p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/meta_federations.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'exhibits' && user_signed_in? %>
+<div id="tab_exhibits" class="individual_tab">
+	<h3>Exhibits</h3>
+	<p>Exhibits can be indexed like this:</p>
+	<p><%= example_link("/exhibits.xml") %></p>
+</div>
+
+<% elsif params[:tab] == 'user_content' && user_signed_in? %>
+<div id="tab_user_content" class="individual_tab">
+	<h3>User Content</h3>
+	<p>A secondary index can be read and written from too:</p>
+	<%= render :partial => 'params', :locals => { :params => @locals_params } %>
+	<p>Example: <%= example_link("/locals.xml?q=%2brossetti&section=community&object_type=Exhibit&federation=NINES") %></p>
+	<p>The output format is described in this <%= link_to "XSD", "/xsd/locals_results.xsd", { :class => 'example_link' } %></p>
+</div>
+
+<% elsif params[:tab] == 'indexing' && user_signed_in? %>
+<div id="tab_indexing" class="individual_tab">
+	<%= render :partial => 'instructions' %>
+</div>
+<% end %>
+</div> <%# tab content %>
+
+<div class="admin">
+<% if user_signed_in? %>
+        <%= link_to "Manage genres", genres_path %> | <%= link_to "Manage disciplines", disciplines_path %> | <%= link_to "Manage archives", archives_path %> | <%= link_to "Manage federations", federations_path %> | <%= link_to "Manage white list", white_lists_path %> | <%= link_to "Log out", destroy_user_session_path, :method=>'delete' %>
+<% else %>
+<%= link_to "admin", new_user_session_path %>
+<% end %>
+</div>

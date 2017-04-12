@@ -1,0 +1,161 @@
+.edit_site_list .header {
+	background: none repeat scroll 0 0 #8B9A49;
+	color: white;
+	margin-top: 4px;
+	padding: 7px 4px 7px 10px;
+}
+
+.site_list .limit_to {
+	margin-top: 16px;
+}
+
+div.site_list div.header {
+	background: none repeat scroll 0 0 #4B6C9C;
+	border: medium none;
+	color: white;
+	font-size: 0.8em;
+	height: 30px;
+	padding-bottom: 0;
+	padding-left: 10px;
+	padding-top: 9px;
+	vertical-align: bottom;
+}
+
+.site_list .row {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-bottom: solid 1px #966C54;
+	min-height: 20px;
+    height: auto !important;
+    overflow: hidden;
+    display: block;
+    width: 99%;
+}
+
+.site_list .row:hover {
+    background: rgb(255, 254, 224);
+}
+
+.site_list .left {
+	float: left;
+	width: 500px;
+	overflow: hidden;
+	position: relative;
+	/*height: 20px;*/
+    display: inline;
+}
+
+.site_list .middle {
+	float: left;
+	/*margin-left: 550px;*/
+    width: 25%;
+    display: inline-block;
+    padding-left: 2em;
+}
+
+.site_list .right {
+    float: right;
+	/*margin-left: 800px;*/
+}
+
+.site_list img {
+	margin-right: 4px;
+}
+
+.site_list .indent0 {
+
+}
+
+.site_list .indent1 {
+	padding-left: 16px;
+}
+
+.site_list .indent2 {
+	padding-left: 32px;
+}
+
+.site_list .indent3 {
+	padding-left: 48px;
+}
+
+.site_list .indent4 {
+	padding-left: 64px;
+}
+
+.yui3-panel .row {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+.yui3-panel .left {
+	text-align: right;
+	float: left;
+	padding-right: .5em;
+	width: 10em;
+}
+
+.yui3-panel .left-indented {
+    text-align: right;
+    float: left;
+    padding-right: .5em;
+    width: 17em;
+}
+
+.yui3-panel .instructions {
+	font-style: italic;
+	color: #777;
+}
+
+.yui3-panel .error {
+	color: red;
+}
+
+.yui3-panel .notice {
+	color: green;
+}
+
+.archive_dlg .right {
+	width: 300px;
+}
+.archive_dlg .narrow {
+    width: 100px;
+}
+
+.archive_dlg input[readonly=readonly] {
+	background-color: #E7E8EA;
+	font-style: italic;
+	color: #777;
+}
+
+.archive_dlg textarea {
+	height: 200px;
+}
+
+.yui3-skin-sam .yui3-panel-content {
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #001E51;
+    border-radius: 8px 8px 8px 8px;
+    box-shadow: 0 0 5px #333333;
+}
+
+.yui3-skin-sam .yui3-panel-content .yui3-widget-hd {
+    background: -webkit-gradient(linear,left bottom,left top,from(#314D75),color-stop(0.07,#314d75),color-stop(0.5,#4b6c9c),to(#5d7ba6));
+    border-radius: 8px 8px 0 0;
+    color: white;
+    min-height: 13px;
+    padding: 8px 28px 8px 8px;
+}
+
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-ft {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 0 0 8px 8px;
+    padding: 8px;
+	clear: both;
+}
+
+#archive_carousel_image {
+	width: 120px;
+	float: left;
+	padding-right: 8px;
+	min-height: 30px;
+}
