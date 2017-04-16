@@ -37,14 +37,14 @@ ActiveRecord::Schema.define(version: 20140919190141) do
 
   create_table "carousels", force: true do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "disciplines", force: true do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "federations", force: true do |t|
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20140919190141) do
   create_table "users", force: true do |t|
     t.string   "email",                              default: "", null: false
     t.string   "encrypted_password",     limit: 128, default: "", null: false
+    t.string   "password_salt",                      default: "", null: false
     t.string   "reset_password_token"
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",                      default: 0

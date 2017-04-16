@@ -17,7 +17,7 @@ namespace :users do
 				if user == nil
 					puts "User not created"
 				else
-					puts "User successfully created"
+					puts "User successfully created #{user.email}"
 				end
 			end
 		end

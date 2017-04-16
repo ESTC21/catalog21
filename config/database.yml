@@ -9,17 +9,17 @@ emop:
   adapter: mysql2
   database: collex_catalog_development
   username: root
-  password: estc21DB_world#DOM!
+  password: root
   host: localhost
-  encoding: utf8
+#  encoding: utf8
 
 development:
   adapter: mysql2
   database: collex_catalog_development
   username: root
-  password: estc21DB_world#DOM!
+  password: root
   host: localhost
-  encoding: utf8
+#  encoding: utf8
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -28,9 +28,9 @@ test: &test
   adapter: mysql2
   database: collex_catalog_development
   username: root
-  password: estc21DB_world#DOM!
+  password: root
   host: localhost
-  encoding: utf8
+#  encoding: utf8
 
 #production:
 #  adapter: mysql2
