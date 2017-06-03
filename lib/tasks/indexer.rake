@@ -20,7 +20,8 @@ require "#{Rails.root}/lib/tasks/task_utilities.rb"
 namespace :indexer do
 
 	def indexer_path()
-		return "#{Rails.root}/lib/tasks/rdf-indexer/target"
+		#return "#{Rails.root}/lib/tasks/rdf-indexer/target"
+    return "#{INDEXER_PATH}"
 	end
 
 	def indexer_name()

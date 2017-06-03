@@ -9,7 +9,7 @@ namespace :solr do
 				return arr2[1]
 			end
 		}
-		return '0000'
+		return '8983'
 	end
 
 	def start(sz)

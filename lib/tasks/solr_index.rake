@@ -26,19 +26,23 @@ namespace :solr_index do
 		folder_file = File.join(path, "sitemap.yml")
 		site_map = YAML.load_file(folder_file)
 		rdf_folders = site_map['archives']
-		all_enum_archives = {}
-		rdf_folders.each { |k, f|
-			if f.kind_of?(String)
-				all_enum_archives[k] = f
-			else
-				all_enum_archives.merge!(f)
-			end
-		}
-		folders = all_enum_archives[archive]
-		if folders == nil
-			return {:error => "The archive \"#{archive}\" was not found in #{folder_file}"}
-		end
-		return {:folders => folders[0].split(';'), :page_size => folders[1]}
+    rdf_folders = rdf_folders.reject {|k, v| v.nil? }
+
+    puts "## #{rdf_folders}"
+		# all_enum_archives = {}
+		# rdf_folders.each { |k, f|
+     #  puts "FFF: #{f}"
+		# 	if f.kind_of?(String)
+		# 		all_enum_archives[k] = f
+		# 	else
+		# 		all_enum_archives.merge!(f)
+		# 	end
+		# }
+		# folders = all_enum_archives[archive]
+		# if folders == nil
+		# 	return {:error => "The archive \"#{archive}\" was not found in #{folder_file}"}
+		# end
+		return {:folders => ['estcstar'], :page_size => 1000}
 	end
 
 	desc "create complete reindexing task list"
@@ -123,6 +127,17 @@ namespace :solr_index do
 			else
 				safe_name = Solr::archive_to_core_name(archive)
 puts "123~~~~~~~~~~~ safe_name: \"#{safe_name}\""
+
+
+
+
+        # The problem is below.  The indexer_path value is wrong
+        # need to figure out where this is coming from and
+        # correct it.
+
+
+
+
 				log_dir = "#{Rails.root}/log"
 				case type
 					when :spider
@@ -138,9 +153,12 @@ puts "123~~~~~~~~~~~ safe_name: \"#{safe_name}\""
 				folders[:folders].each { |folder|
 					puts "11111111111111****************************************************"
 					puts "cd #{indexer_path()} && java -Xmx3584m -jar #{indexer_name()} -logDir \"#{log_dir}\" -source \"#{RDF_PATH}/#{folder}\" -archive \"#{archive}\" #{flags}"
-					puts "11111111111111*****************************************************"
-					cmd_line("cd #{indexer_path()} && java -Xmx3584m -jar #{indexer_name()} -logDir \"#{log_dir}\" -source \"#{RDF_PATH}/#{folder}\" -archive \"#{archive}\" #{flags}")
-				}
+					puts "xxxxxxxxxxxxxxxxxxxx"
+          puts "cd #{INDEXER_PATH} && java -Xmx3584m -jar #{indexer_name()} -logDir \"#{log_dir}\" -source \"#{RDF_PATH}/#{folder}\" -archive \"#{archive}\" #{flags}"
+          puts "11111111111111*****************************************************"
+					#cmd_line("cd #{indexer_path()} && java -Xmx3584m -jar #{indexer_name()} -logDir \"#{log_dir}\" -source \"#{RDF_PATH}/#{folder}\" -archive \"#{archive}\" #{flags}")
+          cmd_line("cd #{INDEXER_PATH} && java -Xmx3584m -jar #{indexer_name()} -logDir \"#{log_dir}\" -source \"#{RDF_PATH}/#{folder}\" -archive \"#{archive}\" #{flags}")
+        }
 			end
 		end
 	end
