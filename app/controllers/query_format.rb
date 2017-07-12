@@ -813,10 +813,10 @@ class QueryFormat
 		  raise(ArgumentError, "Bad parameter (#{key}): (#{definition[:name]}) was passed as an array.") if val.kind_of?(Array) && definition[:can_be_array] != true
 		  if val.kind_of?(Array)
 			val.each { |v|
-			  raise(ArgumentError, "Bad parameter (#{key}): (#{v}). Must match: #{definition[:exp]}") if definition[:exp].match(v) == nil
+			  raise(ArgumentError, "11Bad parameter (#{key}): (#{v}). Must match: #{definition[:exp]}") if definition[:exp].match(v) == nil
 			}
 		  else
-			raise(ArgumentError, "Bad parameter (#{key}): (#{val}). Must match: #{definition[:exp]}") if definition[:exp].match(val) == nil
+			raise(ArgumentError, "22Bad parameter (#{key}): (#{val}). Must match: #{definition[:exp]}") if definition[:exp].match(val) == nil
 		  end
 		  fuz_values[key.sub(/^fuz_/, '')] = val.sub(/[+-]/, '')
 		}
@@ -828,14 +828,14 @@ class QueryFormat
 				
 				definition = format[key]
 				raise(ArgumentError, "Unknown parameter: #{key}") if definition == nil
-				raise(ArgumentError, "Bad parameter (#{key}): (#{definition[:name]}) was passed as an array.") if val.kind_of?(Array) && definition[:can_be_array] != true
+				raise(ArgumentError, "33Bad parameter (#{key}): (#{definition[:name]}) was passed as an array.") if val.kind_of?(Array) && definition[:can_be_array] != true
 				if val.kind_of?(Array)
 					val.each { |v|
-						raise(ArgumentError, "Bad parameter (#{key}): (#{v}). Must match: #{definition[:exp]}") if definition[:exp].match(v) == nil
+						raise(ArgumentError, "44Bad parameter (#{key}): (#{v}). Must match: #{definition[:exp]}") if definition[:exp].match(v) == nil
 					}
 				else
-					# puts "Fail point 4"
-					raise(ArgumentError, "Bad parameter (#{key}): (#{val}). Must match: #{definition[:exp]}") if definition[:exp].match(val) == nil
+					puts "Fail point 4"
+					# raise(ArgumentError, "55Bad parameter (#{key}): (#{val}). Must match: #{definition[:exp]}") if definition[:exp].match(val) == nil
 				end
 
 				if definition[:can_fuz]

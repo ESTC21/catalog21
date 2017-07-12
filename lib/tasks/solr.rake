@@ -4,7 +4,7 @@ namespace :solr do
 	def get_solr_port
 		arr = SOLR_URL.split('/')
 		arr.each { |str|
-			if str.index('estc21.ucr.edu:')
+			if str.index('localhost:')
 				arr2 = str.split(':')
 				return arr2[1]
 			end

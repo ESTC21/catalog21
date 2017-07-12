@@ -27,11 +27,13 @@ class Solr
          core = core[0]
       else
          @shards = nil
+				 core = "resources"
       end
-      core = "resources"
+
       @core = core
 
       @solr = RSolr.connect( :url=>"#{SOLR_URL}/#{core}" )
+      # @solr = RSolr.connect( :url=>"#{SOLR_URL}/archive_estcstar" )
 
 puts ("SOLR_URL::: #{SOLR_URL}")
 
@@ -74,7 +76,8 @@ puts ("SOLR_URL::: #{SOLR_URL}")
       else	# if a federation is passed, then we are using the local index
          name = is_test == :test ? "test" : ""
          name += federation + "LocalContent"
-      end
+			end
+			name = self.get_archive_core_list()
       return Solr.new(name)
    end
 

@@ -22,6 +22,7 @@ require "#{Rails.root}/lib/tasks/task_utilities.rb"
 namespace :solr_index do
 	include TaskUtilities
 
+=begin
 	def get_folders(path, archive)
 		folder_file = File.join(path, "sitemap.yml")
 		site_map = YAML.load_file(folder_file)
@@ -42,7 +43,34 @@ namespace :solr_index do
 		# if folders == nil
 		# 	return {:error => "The archive \"#{archive}\" was not found in #{folder_file}"}
 		# end
-		return {:folders => ['estcstar'], :page_size => 1000}
+		# return {:folders => ['estc_new_rdf'], :page_size => 1000}
+		return {:folders => folders[0].split(';'), :page_size => folders[1]}
+		return {:folders => ['estc_new_rdf'], :page_size => 1000}
+	end
+=end
+
+	def get_folders(path, archive)
+		folder_file = File.join(path, "sitemap.yml")
+		site_map = YAML.load_file(folder_file)
+		rdf_folders = site_map['archives']
+		all_enum_archives = {}
+		rdf_folders.each { |k, f|
+			puts "looping :K: #{k} ... :F: #{f}"
+			if f.kind_of?(String)
+				puts '-- if'
+				all_enum_archives[k] = f
+			else
+				puts '-- if'
+				all_enum_archives.merge!(f)
+			end
+		}
+		puts "-- all_enum_archives[archive]:: #{all_enum_archives[archive]}"
+		folders = all_enum_archives[archive]
+		if folders == nil
+			return {:error => "The archive \"#{archive}\" was not found in #{folder_file}"}
+		end
+		puts "-- folders[0].split(';'):: #{folders[0].split(';')} _ folders[1]:: #{folders[1]}"
+		return {:folders => folders[0].split(';'), :page_size => folders[1]}
 	end
 
 	desc "create complete reindexing task list"
@@ -122,6 +150,8 @@ namespace :solr_index do
 			puts "Call with either :spider, :index, :resolve or :debug"
 		else
 			folders = get_folders(RDF_PATH, archive)
+			puts "folders ::: "
+			puts folders
 			if folders[:error]
 				puts folders[:error]
 			else

@@ -201,6 +201,7 @@ class SearchController < ApplicationController
 			QueryFormat.transform_raw_parameters(params)
 puts "11-------------------------------- #{query_params}"
 puts "22-------------------------------- #{params}"
+puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 			query = QueryFormat.create_solr_query(query_params, params, request.remote_ip)
 			is_test = Rails.env == 'test' ? :test : :live
 			is_test = :shards if params[:test_index]
