@@ -205,9 +205,9 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 
 	def modify_object(params)
 		if params[:operation] == 'replace'
-			response = `curl #{SOLR_URL}/#{@core}/update -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"set":"#{params[:value]}"}}]' 2> /dev/null`	
+			response = `curl #{SOLR_URL}/#{@core}/update?commit=true -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"set":"#{params[:value]}"}}]' 2> /dev/null`
 		elsif params[:operation] == 'append'
-			response = `curl #{SOLR_URL}/#{@core}/update -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"add":"#{params[:value]}"}}]' 2> /dev/null`
+			response = `curl #{SOLR_URL}/#{@core}/update?commit=true -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"add":"#{params[:value]}"}}]' 2> /dev/null`
 		end
 
 		response = JSON.parse(response)
