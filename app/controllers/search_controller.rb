@@ -18,6 +18,7 @@ class SearchController < ApplicationController
 			QueryFormat.transform_raw_parameters(params)
 			puts "Past call to transform_raw_parameters"
 			puts params
+
 			# NOTES: When a search is fuzzy, the query string is not analyzed by solr.
 			# This means (among other things) no stemming is done. Since
 			# stemming happens at index-time, this can often result in no matches being found
@@ -48,6 +49,13 @@ class SearchController < ApplicationController
             params[:t] = "#{orig_prefix}#{stemmed_term}"
             extra_fq = "title:#{orig_term}^80"
          end
+
+			if params.has_key?(:fuz_q)
+				extra_fq += "-hasInstance:[* TO *]"
+				extra_fq += "-instanceof:[* TO *]"
+			else
+				extra_fq += "hasInstance:[* TO *]"
+			end
 
 			puts "Starting QueryFormat.create_solr_query"
 			query = QueryFormat.create_solr_query(query_params, params, request.remote_ip)
