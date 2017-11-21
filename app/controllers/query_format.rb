@@ -36,6 +36,7 @@ class QueryFormat
 		# This finds a utf8 word, plus allows the wildcards * and ? and the apostrophe
 		w = /\p{Word}[\p{Word}'?*]*/
 		verifications = {
+		  :coverage => { :exp => /.*/u, :friendly => "Coverage" },
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 			#:term => { :exp => /^([+\-]("#{w}( #{w})*"|#{w}))+$/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 			:frag => { :exp => /^("#{w}( #{w})*"|#{w})$/u, :friendly => "A list of alphanumeric terms, possibly quoted if there is a space." },
@@ -93,6 +94,8 @@ class QueryFormat
 
 	def self.catalog_format()
 		format = {
+				# New RDF model fields
+				'coverage' => { :name => 'Coverage', :param => :coverage, :default => nil, :transformation => get_proc(:transform_coverage) },
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				't' => { :name => 'Title', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
@@ -559,6 +562,11 @@ class QueryFormat
     #		str = "\"#{str}\"" if str.include?(' ')
     #		return "#{val[0]}#{field}:#{str}"
   end
+
+
+	def self.transform_coverage(key,val)
+		return { 'fq' => self.diacritical_query_data("coverage", val) }
+	end
 
 	def self.transform_title(key,val,fuz=nil)
 	   #
