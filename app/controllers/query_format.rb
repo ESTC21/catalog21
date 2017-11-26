@@ -37,6 +37,12 @@ class QueryFormat
 		w = /\p{Word}[\p{Word}'?*]*/
 		verifications = {
 		  :coverage => { :exp => /.*/u, :friendly => "Coverage" },
+		  :publisher => { :exp => /.*/u, :friendly => "Imprint" },
+		  :abbreviatedTitle => { :exp => /.*/u, :friendly => "Abbreviated Title" },
+		  :variantTitle => { :exp => /.*/u, :friendly => "Variant Title" },
+		  :earlierTitleProper => { :exp => /.*/u, :friendly => "Earlier Title" },
+		  :titleProperOfSeries => { :exp => /.*/u, :friendly => "Series Title" },
+
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 			#:term => { :exp => /^([+\-]("#{w}( #{w})*"|#{w}))+$/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 			:frag => { :exp => /^("#{w}( #{w})*"|#{w})$/u, :friendly => "A list of alphanumeric terms, possibly quoted if there is a space." },
@@ -96,6 +102,16 @@ class QueryFormat
 		format = {
 				# New RDF model fields
 				'coverage' => { :name => 'Coverage', :param => :coverage, :default => nil, :transformation => get_proc(:transform_coverage) },
+				'publisher' => { :name => 'Imprint', :param => :publisher, :default => nil, :transformation => get_proc(:transform_imprint) },
+				'abbreviatedTitle' => { :name => 'Abbreviated Title', :param => :abbreviatedTitle, :default => nil,
+																:transformation => get_proc(:transform_abbreviatedTitle) },
+				'variantTitle' => { :name => 'Variant Title', :param => :variantTitle, :default => nil,
+																:transformation => get_proc(:transform_variantTitle) },
+				'earlierTitleProper' => { :name => 'Earlier Title', :param => :earlierTitleProper, :default => nil,
+																:transformation => get_proc(:transform_earlierTitleProper) },
+				'titleProperOfSeries' => { :name => 'Series Title', :param => :titleProperOfSeries, :default => nil,
+																:transformation => get_proc(:transform_titleProperOfSeries) },
+
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				't' => { :name => 'Title', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
@@ -405,7 +421,7 @@ class QueryFormat
 	end
 
 	def self.diacritical_query_data(field, val, fuz=nil)
-		v = val.downcase()
+		v = (val.include?('+uri') ? val : val.downcase())
 		return "#{v}"
 	end
 
@@ -473,6 +489,7 @@ class QueryFormat
       match = "[#{match}]" if match.include?(' ') && !match.include?('"')
       results.push("#{boost ? '' : pair[0]}#{field}:#{match}#{boost ? "^#{boost}" : ''}")
     }
+		puts "######### Result Year range_query_data: #{results.join(" ")}"
     return results.join(" ")
   end
 
@@ -568,6 +585,27 @@ class QueryFormat
 		return { 'fq' => self.diacritical_query_data("coverage", val) }
 	end
 
+	def self.transform_imprint(key,val)
+		return { 'fq' => self.diacritical_query_data('publisher', val) }
+		# return { 'fq' => "publisher:(#{self.diacritical_query_data('publisher', val)})" }
+	end
+
+	def self.transform_abbreviatedTitle(key,val)
+		return { 'fq' => self.diacritical_query_data("abbreviatedTitle", val) }
+	end
+
+	def self.transform_variantTitle(key,val)
+		return { 'fq' => self.diacritical_query_data("variantTitle", val) }
+	end
+
+	def self.transform_earlierTitleProper(key,val)
+		return { 'fq' => self.diacritical_query_data("earlierTitleProper", val) }
+	end
+
+	def self.transform_titleProperOfSeries(key,val)
+		return { 'fq' => self.diacritical_query_data("titleProperOfSeries", val) }
+	end
+
 	def self.transform_title(key,val,fuz=nil)
 	   #
 	   # NOTE: The 'q' below was formerly 'fq' but this caused problems when searching
@@ -599,7 +637,7 @@ class QueryFormat
 	end
 
 	def self.transform_publisher(key,val)
-		return { 'fq' => self.diacritical_query_data("publisher", val) }
+		return { "fq" => self.diacritical_query_data("publisher", val) }
 	end
 
 	def self.transform_year(key,val)
