@@ -44,6 +44,7 @@ class QueryFormat
 		  :titleProperOfSeries => { :exp => /.*/u, :friendly => "Series Title" },
 
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
+		  :title => { :exp => /.*/u, :friendly => "A list of alphanumeric title, starting with either + or - and possibly quoted if there is a space." },
 			#:term => { :exp => /^([+\-]("#{w}( #{w})*"|#{w}))+$/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 			:frag => { :exp => /^("#{w}( #{w})*"|#{w})$/u, :friendly => "A list of alphanumeric terms, possibly quoted if there is a space." },
       :year => { :exp => /^([+\-]\d{1,4}(\s+[tT][oO]\s+\d{1,4})?)$/, :friendly => "[+-] A 1 to 4 digit date." },
@@ -114,7 +115,7 @@ class QueryFormat
 
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
-				't' => { :name => 'Title', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
+				't' => { :name => 'Title', :param => :title, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title_only) },
         'fuz_t' => { :name => 'Title Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				'aut' => { :name => 'Author', :param => :term, :default => nil, :transformation => get_proc(:transform_author) },
 				'ed' => { :name => 'Editor', :param => :term, :default => nil, :transformation => get_proc(:transform_editor) },
@@ -189,7 +190,7 @@ class QueryFormat
 				'max' => { :name => 'Maximum matches to return', :param => :max, :default => '15', :transformation => get_proc(:transform_max_matches) },
 
 				'q' => { :name => 'Query', :param => :term, :default => nil, :transformation => get_proc(:transform_query) },
-				't' => { :name => 'Title', :param => :term, :default => nil, :transformation => get_proc(:transform_title) },
+				't' => { :name => 'Title', :param => :title, :default => nil, :transformation => get_proc(:transform_title_only) },
 				'aut' => { :name => 'Author', :param => :term, :default => nil, :transformation => get_proc(:transform_author) },
 				'ed' => { :name => 'Editor', :param => :term, :default => nil, :transformation => get_proc(:transform_editor) },
 				'pub' => { :name => 'Publisher', :param => :term, :default => nil, :transformation => get_proc(:transform_publisher) },
@@ -252,7 +253,7 @@ class QueryFormat
 		format = {
 				'q' => { :name => 'Query', :param => :term, :default => nil, :transformation => get_proc(:transform_query) },
 				'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
-				't' => { :name => 'Title', :param => :term, :default => nil, :transformation => get_proc(:transform_title) },
+				't' => { :name => 'Title', :param => :term, :default => nil, :transformation => get_proc(:transform_title_only) },
 				'aut' => { :name => 'Author', :param => :term, :default => nil, :transformation => get_proc(:transform_author) },
 				'ed' => { :name => 'Editor', :param => :term, :default => nil, :transformation => get_proc(:transform_editor) },
 				'pub' => { :name => 'Publisher', :param => :term, :default => nil, :transformation => get_proc(:transform_publisher) },
@@ -314,7 +315,7 @@ class QueryFormat
   def self.languages_format()
     format = {
         'q' => { :name => 'Query', :param => :term, :default => nil, :transformation => get_proc(:transform_query) },
-        't' => { :name => 'Title', :param => :term, :default => nil, :transformation => get_proc(:transform_title) },
+        't' => { :name => 'Title', :param => :title, :default => nil, :transformation => get_proc(:transform_title_only) },
         'aut' => { :name => 'Author', :param => :term, :default => nil, :transformation => get_proc(:transform_author) },
         'ed' => { :name => 'Editor', :param => :term, :default => nil, :transformation => get_proc(:transform_editor) },
         'pub' => { :name => 'Publisher', :param => :term, :default => nil, :transformation => get_proc(:transform_publisher) },
@@ -628,6 +629,11 @@ class QueryFormat
 		return { 'q' => self.diacritical_query_data("title", val, fuz) }
 	end
 
+	def self.transform_title_only(key, val, fuz=nil)
+		puts "inside transform_title_only #{key} #{val} #{fuz}"
+		return { 'fq' => self.diacritical_query_data("title", val) }
+	end
+
 	def self.transform_author(key,val)
 		return { 'fq' => self.diacritical_query_data("author", val) }
 	end
@@ -893,8 +899,8 @@ class QueryFormat
 				else
 					solr_hash = definition[:transformation].call(key,val)
 				end
-				
 
+				# solr_hash = { 'title' => '+clara' } if key == 't'
 				query.merge!(solr_hash) {|k, oldval, newval|
 						oldval + " " + newval
 				}
