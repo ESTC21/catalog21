@@ -54,7 +54,14 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 			  "editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
 			  "isReferencedBy", "shelfMark"]
 
-         @facet_fields = ['genre','archive','freeculture', 'has_full_text', 'federation', 'typewright', 'doc_type', 'discipline', 'role', 'shelfMark']
+         @facet_fields = ['genre','archive','freeculture', 'has_full_text',
+													'federation', 'typewright', 'doc_type',
+													"subject","subject_uri", "digital_surrogats",
+													"hasInstance", "instanceof", "description",
+													"coverage", "titleOfResource", "abbreviatedTitle", "titleProperOfSeries", "variantTitle", "earlierTitleProper",
+													"editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
+													"isReferencedBy", "shelfMark"]
+													# 'discipline', 'role', 'shelfMark']
       end
    end
 
