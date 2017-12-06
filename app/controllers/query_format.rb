@@ -42,6 +42,7 @@ class QueryFormat
 		  :variantTitle => { :exp => /.*/u, :friendly => "Variant Title" },
 		  :earlierTitleProper => { :exp => /.*/u, :friendly => "Earlier Title" },
 		  :titleProperOfSeries => { :exp => /.*/u, :friendly => "Series Title" },
+      :description => { :exp => /.*/u, :friendly => "Note" },
 
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 		  :title => { :exp => /.*/u, :friendly => "A list of alphanumeric title, starting with either + or - and possibly quoted if there is a space." },
@@ -776,7 +777,7 @@ class QueryFormat
   end
 
 	def self.transform_field_ascii(key,val)
-		return { key => val + "_ascii" }
+		return { key => val + "" }
 	end
 
 	def self.transform_nil(key,val)

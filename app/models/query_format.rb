@@ -802,6 +802,7 @@ class QueryFormat
 		# Defaults are added if it doesn't exist and a default was specified in the format.
 
 		# If this isn't an authorized call, then only return free culture items.
+
 		if request_ip && !Federation.request_from_federation(request_ip)
 				if params['o'].blank?
 					params['o'] = '+freeculture'
