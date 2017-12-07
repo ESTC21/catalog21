@@ -139,7 +139,8 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		if prefix
 			if prefix != ""
 				options["facet.method"] = 'enum'
-				options["facet.prefix"] = prefix
+				options["facet.contains"] = prefix
+				options["facet.contains.ignoreCase"] = true
 			end
 			options["facet.missing"] = false
 		else
