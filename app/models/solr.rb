@@ -58,9 +58,11 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 													'federation', 'typewright', 'doc_type',
 													"subject","subject_uri", "digital_surrogats",
 													"hasInstance", "instanceof", "description",
-													"coverage", "titleOfResource", "abbreviatedTitle", "titleProperOfSeries", "variantTitle", "earlierTitleProper",
-													"editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
-													"isReferencedBy", "shelfMark"]
+													"coverage", "titleOfResource", "abbreviatedTitle",
+													"titleProperOfSeries", "variantTitle", "earlierTitleProper",
+													"editionStatement", "noteOnFrequency", "format", "type",
+													"created", "issuer", "publisher", "rights", "language",
+													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT']
 													# 'discipline', 'role', 'shelfMark']
       end
    end
