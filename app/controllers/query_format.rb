@@ -663,11 +663,11 @@ class QueryFormat
   end
 
   def self.transform_role_owner(key, val)
-    return self.transform_role('role_OWN', val)
+    return { 'fq' => self.diacritical_query_data("role_OWN", val) }
   end
 
   def self.transform_role_repository(key, val)
-    return self.transform_role('role_RPS', val)
+    return { 'fq' => self.diacritical_query_data("role_RPS", val) }
   end
 
   def self.transform_role_artist(key, val)

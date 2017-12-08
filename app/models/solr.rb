@@ -62,7 +62,7 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 													"titleProperOfSeries", "variantTitle", "earlierTitleProper",
 													"editionStatement", "noteOnFrequency", "format", "type",
 													"created", "issuer", "publisher", "rights", "language",
-													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT']
+													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT', 'role_OWN']
 													# 'discipline', 'role', 'shelfMark']
       end
    end
