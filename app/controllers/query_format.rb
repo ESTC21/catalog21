@@ -43,6 +43,7 @@ class QueryFormat
 		  :earlierTitleProper => { :exp => /.*/u, :friendly => "Earlier Title" },
 		  :titleProperOfSeries => { :exp => /.*/u, :friendly => "Series Title" },
       :description => { :exp => /.*/u, :friendly => "Note" },
+      :subject => { :exp => /.*/u, :friendly => "Subject" },
 
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 		  :title => { :exp => /.*/u, :friendly => "A list of alphanumeric title, starting with either + or - and possibly quoted if there is a space." },
@@ -113,7 +114,8 @@ class QueryFormat
 																:transformation => get_proc(:transform_earlierTitleProper) },
 				'titleProperOfSeries' => { :name => 'Series Title', :param => :titleProperOfSeries, :default => nil,
 																:transformation => get_proc(:transform_titleProperOfSeries) },
-
+        'subject' => { :name => 'Subject', :param => :subject, :default => nil,
+                                :transformation => get_proc(:transform_subject) },
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				't' => { :name => 'Title', :param => :title, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title_only) },
@@ -134,6 +136,7 @@ class QueryFormat
 				'test_index' => { :name => 'Use Testing Index', :param => :boolean, :default => nil, :transformation => get_proc(:transform_nil) },
         'r_own' => { :name => 'Owner', :param => :string, :default => nil, :transformation => get_proc(:transform_role_owner)},
         'r_art' => { :name => 'Artist', :param => :string, :default => nil, :transformation => get_proc(:transform_role_artist)},
+        'r_rps' => { :name => 'Repository', :param => :string, :default => nil, :transformation => get_proc(:transform_role_repository)},
         'lang' => { :name => 'Language', :param => :language, :default => nil, :transformation => get_proc(:transform_language)},
         'doc_type' => { :name => 'Format', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
         'discipline' => { :name => 'Discipline', :param => :string, :default => nil, :transformation => get_proc(:transform_discipline)},
@@ -592,6 +595,10 @@ class QueryFormat
 		# return { 'fq' => "publisher:(#{self.diacritical_query_data('publisher', val)})" }
 	end
 
+  def self.transform_subject(key, val)
+    return { 'fq' => self.diacritical_query_data('subject', val) }
+  end
+
 	def self.transform_abbreviatedTitle(key,val)
 		return { 'fq' => self.diacritical_query_data("abbreviatedTitle", val) }
 	end
@@ -657,6 +664,10 @@ class QueryFormat
 
   def self.transform_role_owner(key, val)
     return self.transform_role('role_OWN', val)
+  end
+
+  def self.transform_role_repository(key, val)
+    return self.transform_role('role_RPS', val)
   end
 
   def self.transform_role_artist(key, val)
