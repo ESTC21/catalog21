@@ -585,9 +585,14 @@ class QueryFormat
     #		return "#{val[0]}#{field}:#{str}"
   end
 
+	def self.transform_author(key,val)
+		return { 'fq' => self.diacritical_query_data("author", val) }
+		# val = val[1..val.length-1]
+		# return { 'fq' => "+author:(#{val[1..val.length-1]})" }
+	end
 
 	def self.transform_coverage(key,val)
-		return { 'fq' => self.diacritical_query_data("coverage", val) }
+		return { 'fq' => "+coverage:#{val.gsub('+', '')}" } #self.diacritical_query_data("coverage", val) }
 	end
 
 	def self.transform_imprint(key,val)
@@ -642,10 +647,6 @@ class QueryFormat
 		return { 'fq' => self.diacritical_query_data("title", val) }
 	end
 
-	def self.transform_author(key,val)
-		return { 'fq' => self.diacritical_query_data("author", val) }
-	end
-
 	def self.transform_editor(key,val)
 		return { 'fq' => self.diacritical_query_data("editor", val) }
 	end
@@ -663,11 +664,13 @@ class QueryFormat
   end
 
   def self.transform_role_owner(key, val)
-    return { 'fq' => self.diacritical_query_data("role_OWN", val) }
+		return self.transform_role('role_OWN', val)
+		# return { 'fq' => self.diacritical_query_data("role_OWN", val) }
   end
 
   def self.transform_role_repository(key, val)
-    return { 'fq' => self.diacritical_query_data("role_RPS", val) }
+		return self.transform_role('role_RPS', val)
+		# return { 'fq' => self.diacritical_query_data("role_RPS", val) }
   end
 
   def self.transform_role_artist(key, val)
