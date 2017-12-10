@@ -261,7 +261,8 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		if !options['fq'].blank?
 			# we can't split spaces that are quoted. We just want to split spaces that appear before + or -
 			options['fq'] = options['fq'].gsub(' +', '@+').gsub(' -', '@-')
-			fq = options['fq'].split('@')
+
+			fq = options['fq'].split('@+')
 			# we only want one field for all the federations, though. We need to put those back.
 			fed_idx = -1
 			fq.each_with_index { |op, i|

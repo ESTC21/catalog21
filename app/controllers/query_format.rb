@@ -586,13 +586,15 @@ class QueryFormat
   end
 
 	def self.transform_author(key,val)
-		return { 'fq' => self.diacritical_query_data("author", val) }
+    return { 'fq' => "+role_AUT:#{val.gsub('+', '')}" }
+		# return { 'fq' => self.diacritical_query_data("author", val) }
 		# val = val[1..val.length-1]
 		# return { 'fq' => "+author:(#{val[1..val.length-1]})" }
 	end
 
 	def self.transform_coverage(key,val)
-		return { 'fq' => "+coverage:#{val.gsub('+', '')}" } #self.diacritical_query_data("coverage", val) }
+    return { 'fq' => "+coverage:#{val.gsub('+', '')}" }
+    #self.diacritical_query_data("coverage", val) }
 	end
 
 	def self.transform_imprint(key,val)
