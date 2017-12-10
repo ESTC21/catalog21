@@ -116,6 +116,9 @@ class QueryFormat
 																:transformation => get_proc(:transform_titleProperOfSeries) },
         'subject' => { :name => 'Subject', :param => :subject, :default => nil,
                                 :transformation => get_proc(:transform_subject) },
+        'description' => { :name => 'Note', :param => :subject, :default => nil,
+                                :transformation => get_proc(:transform_description) },
+
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				't' => { :name => 'Title', :param => :title, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title_only) },
@@ -605,6 +608,11 @@ class QueryFormat
   def self.transform_subject(key, val)
     return { 'fq' => "+subject:#{val.gsub('+', ' ')}" }
     # return { 'fq' => self.diacritical_query_data('subject', val) }
+  end
+
+  def self.transform_description(key, val)
+    return { 'fq' => "+description:#{val.gsub('+', ' ')}" }
+    # return { 'fq' => self.diacritical_query_data('description', val) }
   end
 
 	def self.transform_abbreviatedTitle(key,val)
