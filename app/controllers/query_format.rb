@@ -593,7 +593,7 @@ class QueryFormat
 	end
 
 	def self.transform_coverage(key,val)
-    return { 'fq' => "+coverage:#{val.gsub('+', '')}" }
+    return { 'fq' => "+coverage:#{val.gsub('+', ' ')}" }
     #self.diacritical_query_data("coverage", val) }
 	end
 
