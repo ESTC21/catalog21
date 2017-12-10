@@ -586,7 +586,7 @@ class QueryFormat
   end
 
 	def self.transform_author(key,val)
-    return { 'fq' => "+role_AUT:#{val.gsub('+', '')}" }
+    return { 'fq' => "+role_AUT:#{val.gsub('+', ' ')}" }
 		# return { 'fq' => self.diacritical_query_data("author", val) }
 		# val = val[1..val.length-1]
 		# return { 'fq' => "+author:(#{val[1..val.length-1]})" }
@@ -598,28 +598,33 @@ class QueryFormat
 	end
 
 	def self.transform_imprint(key,val)
-		return { 'fq' => self.diacritical_query_data('publisher', val) }
-		# return { 'fq' => "publisher:(#{self.diacritical_query_data('publisher', val)})" }
+    return { 'fq' => "+publisher:#{val.gsub('+', ' ')}" }
+    # return { 'fq' => self.diacritical_query_data('publisher', val) }
 	end
 
   def self.transform_subject(key, val)
-    return { 'fq' => self.diacritical_query_data('subject', val) }
+    return { 'fq' => "+subject:#{val.gsub('+', ' ')}" }
+    # return { 'fq' => self.diacritical_query_data('subject', val) }
   end
 
 	def self.transform_abbreviatedTitle(key,val)
-		return { 'fq' => self.diacritical_query_data("abbreviatedTitle", val) }
+    return { 'fq' => "+abbreviatedTitle:#{val.gsub('+', ' ')}" }
+    # return { 'fq' => self.diacritical_query_data("abbreviatedTitle", val) }
 	end
 
 	def self.transform_variantTitle(key,val)
-		return { 'fq' => self.diacritical_query_data("variantTitle", val) }
+    return { 'fq' => "+variantTitle:#{val.gsub('+', ' ')}" }
+		# return { 'fq' => self.diacritical_query_data("variantTitle", val) }
 	end
 
 	def self.transform_earlierTitleProper(key,val)
-		return { 'fq' => self.diacritical_query_data("earlierTitleProper", val) }
+    return { 'fq' => "+earlierTitleProper:#{val.gsub('+', ' ')}" }
+		# return { 'fq' => self.diacritical_query_data("earlierTitleProper", val) }
 	end
 
 	def self.transform_titleProperOfSeries(key,val)
-		return { 'fq' => self.diacritical_query_data("titleProperOfSeries", val) }
+    return { 'fq' => "+titleProperOfSeries:#{val.gsub('+', ' ')}" }
+		# return { 'fq' => self.diacritical_query_data("titleProperOfSeries", val) }
 	end
 
 	def self.transform_title(key,val,fuz=nil)
@@ -646,7 +651,7 @@ class QueryFormat
 
 	def self.transform_title_only(key, val, fuz=nil)
 		puts "inside transform_title_only #{key} #{val} #{fuz}"
-		return { 'fq' => self.diacritical_query_data("title", val) }
+    return { 'fq' => "+title:#{val.gsub('+', ' ')}" }
 	end
 
 	def self.transform_editor(key,val)
@@ -654,7 +659,8 @@ class QueryFormat
 	end
 
 	def self.transform_publisher(key,val)
-		return { "fq" => self.diacritical_query_data("publisher", val) }
+    return { 'fq' => "+publisher:#{val.gsub('+', ' ')}" }
+		# return { "fq" => self.diacritical_query_data("publisher", val) }
 	end
 
 	def self.transform_year(key,val)
@@ -666,12 +672,13 @@ class QueryFormat
   end
 
   def self.transform_role_owner(key, val)
+    return { 'fq' => "+role_OWN:#{val.gsub('+', ' ')}" }
 		return self.transform_role('role_OWN', val)
-		# return { 'fq' => self.diacritical_query_data("role_OWN", val) }
   end
 
   def self.transform_role_repository(key, val)
-		return self.transform_role('role_RPS', val)
+    return { 'fq' => "+role_RPS:#{val.gsub('+', ' ')}" }
+		# return self.transform_role('role_RPS', val)
 		# return { 'fq' => self.diacritical_query_data("role_RPS", val) }
   end
 
@@ -694,7 +701,8 @@ class QueryFormat
 	end
 
 	def self.transform_genre(key,val)
-		return { 'fq' => self.insert_field_name("genre", val) }
+    return { 'fq' => "+genre:#{val.gsub('+', ' ')}" }
+		# return { 'fq' => self.insert_field_name("genre", val) }
   end
 
   def self.transform_discipline(key,val)
@@ -702,7 +710,7 @@ class QueryFormat
   end
 
   def self.transform_doc_type(key,val)
-    return { 'fq' => self.insert_field_name("doc_type", val) }
+    return { 'fq' => "+doc_type:#{val.gsub('+', ' ')}" }
   end
 
 	def self.transform_federation(key,val)
