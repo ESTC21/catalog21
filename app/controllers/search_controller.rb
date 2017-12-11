@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 class SearchController < ApplicationController
+
+  before_action :map_field_for_autocomplete, only: [:autocomplete]
 	# GET /searches
 	# GET /searches.xml
 	def index
@@ -249,5 +251,14 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 			format.xml  # modify.xml.builder
 		end
 	end
+
+  private
+  def map_field_for_autocomplete
+    fields = {
+      'record_format' => 'format'
+    }
+
+    params[:field] = fields[params[:field]] || params[:field]
+  end
 
 end

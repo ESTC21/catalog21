@@ -44,6 +44,7 @@ class QueryFormat
 		  :titleProperOfSeries => { :exp => /.*/u, :friendly => "Series Title" },
       :description => { :exp => /.*/u, :friendly => "Note" },
       :subject => { :exp => /.*/u, :friendly => "Subject" },
+      :record_format => { :exp => /.*/u, :friendly => "Format" },
 
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 		  :title => { :exp => /.*/u, :friendly => "A list of alphanumeric title, starting with either + or - and possibly quoted if there is a space." },
@@ -118,6 +119,8 @@ class QueryFormat
                                 :transformation => get_proc(:transform_subject) },
         'description' => { :name => 'Note', :param => :subject, :default => nil,
                                 :transformation => get_proc(:transform_description) },
+        'record_format' => { :name => 'Format', :param => :record_format, :default => nil,
+                                :transformation => get_proc(:transform_format) },
 
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
@@ -141,7 +144,7 @@ class QueryFormat
         'r_art' => { :name => 'Artist', :param => :string, :default => nil, :transformation => get_proc(:transform_role_artist)},
         'r_rps' => { :name => 'Repository', :param => :string, :default => nil, :transformation => get_proc(:transform_role_repository)},
         'lang' => { :name => 'Language', :param => :language, :default => nil, :transformation => get_proc(:transform_language)},
-        'doc_type' => { :name => 'Format', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
+        'doc_type' => { :name => 'Type', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
         'discipline' => { :name => 'Discipline', :param => :string, :default => nil, :transformation => get_proc(:transform_discipline)},
         'role_TRL' => { :name => 'Translator', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
         'role_ARC' => { :name => 'Architect', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
@@ -210,7 +213,7 @@ class QueryFormat
         'r_own' => { :name => 'Owner', :param => :string, :default => nil, :transformation => get_proc(:transform_role_owner)},
         'r_art' => { :name => 'Artist', :param => :string, :default => nil, :transformation => get_proc(:transform_role_artist)},
         'lang' => { :name => 'Language', :param => :language, :default => nil, :transformation => get_proc(:transform_language)},
-		    'doc_type' => { :name => 'Format', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
+		    'doc_type' => { :name => 'Type', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
 		    'discipline' => { :name => 'Discipline', :param => :string, :default => nil, :transformation => get_proc(:transform_discipline)},
         'role_TRL' => { :name => 'Translator', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
         'role_ARC' => { :name => 'Architect', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
@@ -273,7 +276,7 @@ class QueryFormat
         'r_own' => { :name => 'Owner', :param => :string, :default => nil, :transformation => get_proc(:transform_role_owner)},
         'r_art' => { :name => 'Artist', :param => :string, :default => nil, :transformation => get_proc(:transform_role_artist)},
         'lang' => { :name => 'Language', :param => :language, :default => nil, :transformation => get_proc(:transform_language)},
-        'doc_type' => { :name => 'Format', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
+        'doc_type' => { :name => 'Type', :param => :string, :default => nil, :transformation => get_proc(:transform_doc_type)},
         'discipline' => { :name => 'Discipline', :param => :string, :default => nil, :transformation => get_proc(:transform_discipline)},
         'role_TRL' => { :name => 'Translator', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
         'role_ARC' => { :name => 'Architect', :param => :string, :default => nil, :transformation => get_proc(:transform_role_generic)},
@@ -620,6 +623,10 @@ class QueryFormat
   def self.transform_description(key, val)
     return { 'fq' => convert_value_to_filters('description', val) }
     # return { 'fq' => self.diacritical_query_data('description', val) }
+  end
+
+  def self.transform_format(key, val)
+    return { 'fq' => convert_value_to_filters('format', val) }
   end
 
 	def self.transform_abbreviatedTitle(key,val)
