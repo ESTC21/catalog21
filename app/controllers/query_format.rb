@@ -601,7 +601,10 @@ class QueryFormat
 	end
 
 	def self.transform_imprint(key,val)
-    return { 'fq' => "+publisher:#{val.gsub('+', ' ')}" }
+    words = val.split('+')
+    query_filters = []
+    words.reject(&:empty?).each{|word| query_filters << " +publisher:*#{word}*"}
+    return { 'fq' => query_filters.join('')}
     # return { 'fq' => self.diacritical_query_data('publisher', val) }
 	end
 
