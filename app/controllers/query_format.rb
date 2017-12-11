@@ -589,10 +589,13 @@ class QueryFormat
   end
 
 	def self.transform_author(key,val)
-    return { 'fq' => "+role_AUT:#{val.gsub('+', ' ')}" }
-		# return { 'fq' => self.diacritical_query_data("author", val) }
-		# val = val[1..val.length-1]
-		# return { 'fq' => "+author:(#{val[1..val.length-1]})" }
+    words = val.split('+')
+    query_filters = []
+    words.reject(&:empty?).each{|word| query_filters << " +role_AUT:*#{word}*"}
+    return { 'fq' => query_filters.join('') }
+    # return { 'fq' => self.diacritical_query_data("author", val) }
+    # val = val[1..val.length-1]
+    # return { 'fq' => "+author:(#{val[1..val.length-1]})" }
 	end
 
 	def self.transform_coverage(key,val)
