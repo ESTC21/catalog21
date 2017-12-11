@@ -588,26 +588,27 @@ class QueryFormat
     #		return "#{val[0]}#{field}:#{str}"
   end
 
-	def self.transform_author(key,val)
+  def self.convert_value_to_filters(key, val)
     words = val.split('+')
     query_filters = []
-    words.reject(&:empty?).each{|word| query_filters << " +role_AUT:*#{word}*"}
-    return { 'fq' => query_filters.join('') }
+    words.reject(&:empty?).each{|word| query_filters << " +#{key}:*#{word}*"}
+    return query_filters.join('')
+  end
+
+	def self.transform_author(key,val)
+    return { 'fq' => convert_value_to_filters('role_AUT', val) }
     # return { 'fq' => self.diacritical_query_data("author", val) }
     # val = val[1..val.length-1]
     # return { 'fq' => "+author:(#{val[1..val.length-1]})" }
 	end
 
 	def self.transform_coverage(key,val)
-    return { 'fq' => "+coverage:#{val.gsub('+', ' ')}" }
+    return { 'fq' => convert_value_to_filters('coverage', val) }
     #self.diacritical_query_data("coverage", val) }
 	end
 
 	def self.transform_imprint(key,val)
-    words = val.split('+')
-    query_filters = []
-    words.reject(&:empty?).each{|word| query_filters << " +publisher:*#{word}*"}
-    return { 'fq' => query_filters.join('')}
+    return { 'fq' => convert_value_to_filters('publisher', val) }
     # return { 'fq' => self.diacritical_query_data('publisher', val) }
 	end
 
