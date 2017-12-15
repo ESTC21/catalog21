@@ -593,7 +593,7 @@ class QueryFormat
 
   def self.convert_value_to_filters(key, val)
     #remove [,] and : if in the middle of the word till the + sign
-    val = val.gsub(/([ \[\]])|:(.*?)[^+]*/, "")
+    val = val.gsub(/([ \(\) \{\} \[\]])|:(.*?)[^+]*/, "")
     words = val.split('+')
     query_filters = []
     words.reject(&:empty?).each{|word| query_filters << " +#{key}:*#{word}*"}
