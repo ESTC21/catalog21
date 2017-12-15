@@ -52,7 +52,7 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		 		"hasInstance", "instanceof", "description",
 			  "coverage", "titleOfResource", "abbreviatedTitle", "titleProperOfSeries", "variantTitle", "earlierTitleProper",
 			  "editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
-			  "isReferencedBy", "shelfMark"]
+			  "isReferencedBy", "shelfMark", "subjectFacet"]
 
          @facet_fields = ['genre','archive','freeculture', 'has_full_text',
 													'federation', 'typewright', 'doc_type',
@@ -62,7 +62,7 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 													"titleProperOfSeries", "variantTitle", "earlierTitleProper",
 													"editionStatement", "noteOnFrequency", "format", "type",
 													"created", "issuer", "publisher", "rights", "language",
-													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT', 'role_OWN', 'year']
+													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT', 'role_OWN', 'year', 'subjectFacet']
 													# 'discipline', 'role', 'shelfMark']
       end
    end
@@ -448,7 +448,6 @@ end
 		# make the facets more convenient. They are returned as a hash, with each key being the facet type.
 		# Then the value is an array. The values of the array alternate between the name of the facet and the
 		# count of the number of objects that match it. There is also a nil value that needs to be ignored.
-
 		facets = {}
 		if ret && ret['facet_counts'] && ret['facet_counts']['facet_fields']
 			ret['facet_counts']['facet_fields'].each { |key,raw_list|

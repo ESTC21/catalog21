@@ -618,7 +618,7 @@ class QueryFormat
 	end
 
   def self.transform_subject(key, val)
-    return { 'fq' => convert_value_to_filters('subject', val) }
+    return { 'fq' => convert_value_to_filters('subjectFacet', val) }
     # return { 'fq' => self.diacritical_query_data('subject', val) }
   end
 
