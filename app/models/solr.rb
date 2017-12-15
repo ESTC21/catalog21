@@ -52,7 +52,7 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		 		"hasInstance", "instanceof", "description",
 			  "coverage", "titleOfResource", "abbreviatedTitle", "titleProperOfSeries", "variantTitle", "earlierTitleProper",
 			  "editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
-			  "isReferencedBy", "shelfMark", "subjectFacet"]
+			  "isReferencedBy", "shelfMark", "subjectFacet", 'doc_type']
 
          @facet_fields = ['genre','archive','freeculture', 'has_full_text',
 													'federation', 'typewright', 'doc_type',
