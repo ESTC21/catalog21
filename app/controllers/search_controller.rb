@@ -3,6 +3,8 @@
 class SearchController < ApplicationController
 
   before_action :map_field_for_autocomplete, only: [:autocomplete]
+  before_action :add_default_fq, only: [:index]
+
 	# GET /searches
 	# GET /searches.xml
 	def index
@@ -41,7 +43,6 @@ class SearchController < ApplicationController
      			extra_query = "content:#{orig_term}^80"
      	   end
 
-     	   extra_fq = ""
          if params.has_key?(:fuz_t)
             original_t = params[:t]
             orig_prefix = original_t[0]
@@ -49,27 +50,21 @@ class SearchController < ApplicationController
             stemmed_term = Stemmer::stem_word(orig_term)
             stemmed_term.force_encoding("UTF-8")
             params[:t] = "#{orig_prefix}#{stemmed_term}"
-            extra_fq = "title:#{orig_term}^80"
+            @extra_fq += "title:#{orig_term}^80"
          end
-
-			if params.has_key?(:fuz_q)
-				extra_fq += "-hasInstance:[* TO *]"
-				extra_fq += "-instanceof:[* TO *]"
-			else
-				extra_fq += "hasInstance:[* TO *]"
-			end
 
 			puts "Starting QueryFormat.create_solr_query"
 			query = QueryFormat.create_solr_query(query_params, params, request.remote_ip)
 			puts "Finished QueryFormat.create_solr_query"
 
 			if !extra_query.blank?
-			   q=query['q']
-			   query['q'] = "#{extra_query} #{q}"
+			  q=query['q']
+			  query['q'] = "#{extra_query} #{q}"
 			end
-			if !extra_fq.blank?
-            fq=query['fq']
-            query['fq'] = "#{extra_fq} #{fq}"
+
+      if !@extra_fq.blank?
+        fq=query['fq']
+        query['fq'] = "#{@extra_fq} #{fq}"
       end
 
 			is_test = Rails.env == 'test' ? :test : :live
@@ -259,6 +254,18 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
     }
 
     params[:field] = fields[params[:field]] || params[:field]
+  end
+
+  def add_default_fq
+    @extra_fq = ""
+    if params.has_key?(:fuz_q)
+      @extra_fq += "-hasInstance:[* TO *]"
+      @extra_fq += "-instanceof:[* TO *]"
+    elsif params.has_key?(:r_own) || params.has_key?(:r_rps)
+      @extra_fq += "instanceof:[* TO *]"
+    else
+      @extra_fq += "hasInstance:[* TO *]"
+    end
   end
 
 end
