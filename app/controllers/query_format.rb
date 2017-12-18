@@ -45,6 +45,7 @@ class QueryFormat
       :description => { :exp => /.*/u, :friendly => "Note" },
       :subject => { :exp => /.*/u, :friendly => "Subject" },
       :record_format => { :exp => /.*/u, :friendly => "Format" },
+      :tag => { :exp => /.*/u, :friendly => "URI" },
 
 		  :term => { :exp => /.*/u, :friendly => "A list of alphanumeric terms, starting with either + or - and possibly quoted if there is a space." },
 		  :title => { :exp => /.*/u, :friendly => "A list of alphanumeric title, starting with either + or - and possibly quoted if there is a space." },
@@ -121,7 +122,7 @@ class QueryFormat
                                 :transformation => get_proc(:transform_description) },
         'record_format' => { :name => 'Format', :param => :record_format, :default => nil,
                                 :transformation => get_proc(:transform_format) },
-
+        'tag' => { :name => 'URI', :param => :uri, :default => nil, :transformation => get_proc(:transform_tag) },
 				'q' => { :name => 'Query', :param => :term, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title) },
         'fuz_q' => { :name => 'Query Fuzz Value', :param => :fuz_value, :default => nil, :transformation => get_proc(:transform_nil) },
 				't' => { :name => 'Title', :param => :title, :default => nil, :can_fuz => true, :transformation => get_proc(:transform_title_only) },
@@ -734,6 +735,10 @@ class QueryFormat
 
   def self.transform_doc_type(key,val)
     return { 'fq' => convert_value_to_filters('doc_type', val) }
+  end
+
+  def self.transform_tag(key, val)
+    return { 'fq' => "+uri:(" + val.split(",").map{|uri| "\"#{uri}\""}.join("||") + ")" }
   end
 
 	def self.transform_federation(key,val)
