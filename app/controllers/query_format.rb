@@ -593,11 +593,29 @@ class QueryFormat
   end
 
   def self.convert_value_to_filters(key, val)
-    #remove [,] and : if in the middle of the word till the + sign
-    val = val.gsub(/([ \(\) \{\} ])|[:\[\[](.*?)[^+]*/, "")
-    words = val.split('+')
+    add_filters = val.scan(/[+][(](.*?)[)]/).flatten.reject(&:empty?)
+    not_filters = val.scan(/[-][(](.*?)[)]/).flatten.reject(&:empty?)
+
     query_filters = []
-    words.reject(&:empty?).each{|word| query_filters << " +#{key}:*#{word}*"}
+    if add_filters.length > 0
+      add_filters.each do |word|
+        #remove [,] and : if in the middle of the word till the + sign
+        word = word.gsub(/([ \(\) \{\} ])|[:\[\[](.*?)[^+|-]*/, "")
+        query_filters << " +#{key}:*#{word}*"
+      end
+    end
+
+    if not_filters.length > 0
+      not_filter_string = "!("
+      not_filters.each_with_index do |word, index|
+        word = word.gsub(/([ \(\) \{\} ])|[:\[\[](.*?)[^+|-]*/, "")
+        not_filter_string += " #{key}:*#{word}*"
+        not_filter_string += " AND " if not_filters[index + 1]
+      end
+      not_filter_string += ")"
+      query_filters << not_filter_string
+    end
+
     return query_filters.join('')
   end
 

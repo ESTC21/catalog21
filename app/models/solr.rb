@@ -256,37 +256,37 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		end
 	end
 
-	def process_fq(options)
-		# do separate 'fq' fields for each and add the tag var
-		if !options['fq'].blank?
-			# we can't split spaces that are quoted. We just want to split spaces that appear before + or -
-			options['fq'] = options['fq'].gsub(' +', '@+').gsub(' -', '@-')
+  def process_fq(options)
+    # do separate 'fq' fields for each and add the tag var
+    if !options['fq'].blank?
+      # we can't split spaces that are quoted. We just want to split spaces that appear before + or -
+      options['fq'] = options['fq'].gsub(' +', '@+')
+      fq = options['fq'].split(/(?=@+|!\()/)
+      # we only want one field for all the federations, though. We need to put those back.
+      fed_idx = -1
+      fq.each_with_index { |op, i|
+        fq[i] = op = op.gsub('@+', '')
 
-			fq = options['fq'].split('@+')
-			# we only want one field for all the federations, though. We need to put those back.
-			fed_idx = -1
-			fq.each_with_index { |op, i|
-				if op.include?("federation:")
-					if fed_idx == -1
-						fq[i] = '{!tag=fed}' + op
-						fed_idx = i
-					else
-						fq[fed_idx] += " OR #{op}"
-						fq[i] = nil
-					end
-				elsif op.include?("archive:")
-					fq[i] = '{!tag=arch}' + op
-				
-				end
-if op.include?("freeculture:")
-					fq[i] = nil
-end
-			}
-			fq.compact!
-			options['fq'] = fq
-		end
+        if op.include?("federation:")
+          if fed_idx == -1
+            fq[i] = '{!tag=fed}' + op
+            fed_idx = i
+          else
+            fq[fed_idx] += " OR #{op}"
+            fq[i] = nil
+          end
+        elsif op.include?("archive:")
+          fq[i] = '{!tag=arch}' + op
+        end
+        if op.include?("freeculture:")
+          fq[i] = nil
+        end
+      }
+      fq.compact!
+      options['fq'] = fq
+    end
 
-	end
+  end
 
 def search(options, overrides = {})
 	puts "SOLR::::::::SEARCH"
