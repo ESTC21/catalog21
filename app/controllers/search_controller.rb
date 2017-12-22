@@ -3,6 +3,7 @@
 class SearchController < ApplicationController
 
   before_action :map_field_for_autocomplete, only: [:autocomplete]
+  before_action :set_user_action, only: [:index]
   before_action :add_default_fq, only: [:index]
 
 	# GET /searches
@@ -256,9 +257,16 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
     params[:field] = fields[params[:field]] || params[:field]
   end
 
+  def set_user_action
+    if params.has_key?(:u_action)
+      @user_action = params[:u_action]
+      params.delete(:u_action)
+    end
+  end
+
   def add_default_fq
     @extra_fq = ""
-    if params.has_key?(:fuz_q)
+    if @user_action || params.has_key?(:fuz_q)
       @extra_fq += "-hasInstance:[* TO *]"
       @extra_fq += "-instanceof:[* TO *]"
     elsif params.has_key?(:r_own) || params.has_key?(:r_rps)
