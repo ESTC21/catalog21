@@ -121,7 +121,6 @@ class SearchController < ApplicationController
 			max = query['max'].to_i
 			query.delete('max')
 			words = solr.auto_complete(query)
-			words.sort! { |a,b| b[:count] <=> a[:count] }
 			words = words[0..(max-1)]
 			@results = words.map { |word|
 				{ :item => word[:name], :occurrences => word[:count] }
