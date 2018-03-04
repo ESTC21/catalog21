@@ -129,14 +129,15 @@ namespace :solr_index do
 		sh_all.close()
 	end
 
-	def index_archive(msg, archive, type)
+	def index_archive(msg, archive, type, append=false)
 		flags = nil
 		case type
 			when :spider
 				flags = "-mode spider"
 				puts "~~~~~~~~~~~ #{msg} \"#{archive}\" [see log/progress/#{archive}_progress.log and log/#{archive}_spider_error.log]"
 			when :index
-				flags = "-mode index -delete"
+				puts "!!!!!! #{append == false}"
+				flags = "-mode index #{'-delete' unless append}"
 				puts "~~~~~~~~~~~ #{msg} \"#{archive}\" [see log/progress/#{archive}_progress.log and log/#{archive}_error.log]"
 			when :debug
 				flags = "-mode test"
@@ -248,15 +249,20 @@ puts "~~~~~~~~~~~ duplicate check done \"#{page_size}\" "
 
 	def do_archive(split = :split)
 		archive = ENV['archive']
+		append = ENV['append']
+
 		if archive == nil
 			puts "Usage: call with archive=XXX,YYY"
 		else
 			start_time = Time.now
+			append = false if append.nil?
+			append = (append == 'true' ? true : false)
+
 			if split == :split
 				archives = archive.split(',')
-				archives.each { |a| yield a }
+				archives.each { |a| yield a, append }
 			else
-				yield archive
+				yield archive, append
 			end
 			finish_line(start_time)
 		end
@@ -330,9 +336,9 @@ puts "~~~~~~~~~~~ duplicate check done \"#{page_size}\" "
 		end
 	end
 
-	desc "Index documents from the rdf folder to the reindex core (param: archive=XXX,YYY)"
+	desc "Index documents from the rdf folder to the reindex core (param: archive=XXX,YYY append=true/false)"
 	task :index  => :environment do
-		do_archive { |archive| index_archive("Index", archive, :index) }
+		do_archive { |archive, append| index_archive("Index", archive, :index, append) }
 	end
 
 	desc "Test one RDF archive (param: archive=XXX,YYY)"
@@ -345,10 +351,10 @@ puts "~~~~~~~~~~~ duplicate check done \"#{page_size}\" "
 		do_archive { |archive| index_archive("Debug", archive, :debug) }
 	end
 
-	desc "Index and test one rdf archive (param: archive=XXX,YYY)"
+	desc "Index and test one rdf archive (param: archive=XXX,YYY append=true/false)"
 	task :index_and_test => :environment do
-		do_archive { |archive|
-			index_archive("Index", archive, :index)
+		do_archive { |archive, append|
+			index_archive("Index", archive, :index, append)
 			test_archive(archive)
 		}
 	end
