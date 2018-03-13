@@ -258,8 +258,10 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 
   def set_actions
     if params.has_key?(:u_action)
+      @orphan = params[:orphan]
       @user_action = params[:u_action]
       params.delete(:u_action)
+      params.delete(:orphan)
     elsif params.has_key?(:match_holding)
       @match_holding = params[:match_holding]
       params.delete(:match_holding)
@@ -268,13 +270,20 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 
   def add_default_fq
     @extra_fq = ""
-    if @match_holding || @user_action == 'match' || params.has_key?(:fuz_q)
+    if @match_holding || params.has_key?(:fuz_q)
       @extra_fq += "-hasInstance:[* TO *]"
       @extra_fq += "-instanceof:[* TO *]"
+    elsif @user_action
+      if @orphan == 'true'
+        @extra_fq += "hasInstance:[* TO *]"
+      else
+        @extra_fq += "-hasInstance:[* TO *]"
+        @extra_fq += "-instanceof:[* TO *]"
+      end
     elsif params.has_key?(:r_own) || params.has_key?(:r_rps)
       @extra_fq += "instanceof:[* TO *]"
     else
-      @extra_fq += "hasInstance:[* TO *]"
+      @extra_fq += "-instanceof:[* TO *]"
     end
   end
 
