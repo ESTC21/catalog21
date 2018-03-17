@@ -213,6 +213,7 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 			solr = Solr.factory_create(is_test)
 			puts "33--------------------- #{query}"
 			@document = solr.details(query)
+      @document = solr.fetch_shelfmark_for_uris(@document, request.remote_ip)
 
 			respond_to do |format|
 				format.html # index.html.erb
