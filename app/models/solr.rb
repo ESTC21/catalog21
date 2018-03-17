@@ -433,6 +433,29 @@ end
 		end
 	end
 
+  def fetch_shelfmark_for_uris(results, remote_ip)
+    copies = results['hasInstance']
+    return results if copies.nil? || copies.length <= 0
+    results['shelf_mark_copies'] = []
+    fields = ['uri', 'shelfMark']
+    shelfmarks = []
+    copies.each do |uri|
+      query_params = QueryFormat.details_format()
+      query = QueryFormat.create_solr_query(query_params, {"uri" => uri}, remote_ip)
+      options = add_field_list_param(query, fields)
+      response = select(options)
+
+      if response && response['response'] && response['response']['docs'] && response['response']['docs'].length > 0
+        if response['response']['docs'].first['shelfMark'] && response['response']['docs'].first['shelfMark'] != '[Shelfmark not available]'
+          results['shelf_mark_copies'] << [uri, response['response']['docs'].first['shelfMark']]
+        else
+          results['shelf_mark_copies'] << [uri, uri.split('/').last]
+        end
+      end
+    end
+    results
+  end
+
 	def full_object(uri)
 		begin
 			return self.details({ q: "uri:#{uri}" }, { field_list: [ '*' ], quiet: true })
