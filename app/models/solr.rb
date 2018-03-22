@@ -437,7 +437,7 @@ end
     copies = results['hasInstance']
     return results if copies.nil? || copies.length <= 0
     results['shelf_mark_copies'] = []
-    fields = ['uri', 'shelfMark']
+    fields = ['uri', 'shelfMark', 'role_RPS']
     shelfmarks = []
     copies.each do |uri|
       query_params = QueryFormat.details_format()
@@ -446,10 +446,16 @@ end
       response = select(options)
 
       if response && response['response'] && response['response']['docs'] && response['response']['docs'].length > 0
+				library_name = response['response']['docs'].first['role_RPS'][0] if response['response']['docs'].first['role_RPS'].present?
+				
         if response['response']['docs'].first['shelfMark'] && response['response']['docs'].first['shelfMark'] != '[Shelfmark not available]'
-          results['shelf_mark_copies'] << [uri, response['response']['docs'].first['shelfMark']]
-        else
-          results['shelf_mark_copies'] << [uri, uri.split('/').last]
+					library_name_with_shelf_mark = response['response']['docs'].first['shelfMark']
+					library_name_with_shelf_mark = "#{library_name} - #{response['response']['docs'].first['shelfMark']}"
+					results['shelf_mark_copies'] << [uri, library_name_with_shelf_mark]
+				else
+					library_name_with_shelf_mark = uri.split('/').last
+					library_name_with_shelf_mark = "#{library_name} - #{uri.split('/').last}" if library_name.present?
+          results['shelf_mark_copies'] << [uri, library_name_with_shelf_mark]
         end
       end
     end
