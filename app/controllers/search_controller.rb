@@ -274,13 +274,17 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
     if @match_holding || params.has_key?(:fuz_q)
       @extra_fq += "-hasInstance:[* TO *]"
       @extra_fq += "-instanceof:[* TO *]"
-    elsif @user_action
+    elsif @user_action == 'match_holding_match'
+      @extra_fq += "hasInstance:[* TO *]"
+
+    elsif @user_action == 'match'
       if @orphan == 'true'
         @extra_fq += "hasInstance:[* TO *]"
       else
         @extra_fq += "-hasInstance:[* TO *]"
         @extra_fq += "-instanceof:[* TO *]"
       end
+
     elsif params.has_key?(:r_own) || params.has_key?(:r_rps)
       @extra_fq += "instanceof:[* TO *]"
     else
