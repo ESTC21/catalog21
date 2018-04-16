@@ -44,14 +44,26 @@ puts ("SOLR_URL::: #{SOLR_URL}")
          @field_list = [ "uri", "archive", "date_label", "year", "genre", "source", "image", "thumbnail", "title", "alternative", "url",
    			"role_ART", "role_AUT", "role_EDT", "role_PBL", "role_TRL", "role_EGR", "role_ETR", "role_CRE", "role_OWN", "freeculture",
    			"is_ocr", "federation", "has_full_text", "source_xml", "provenance", "discipline", "typewright",
-            "role_ARC", "role_BND", "role_BKD", "role_BKP", "role_CLL", "role_CTG", "role_COL", "role_CLR", "role_CWT", "role_COM", "role_CMT",
-            "role_DUB", "role_FAC", "role_ILU", "role_ILL", "role_LTG", "role_PRT", "role_POP", "role_PRM",
-            "role_RPS", "role_RBR", "role_SCR", "role_SCL", "role_TYD", "role_TYG", "role_WDE", "role_WDC",
-   	      "role_BRD", "role_CNG", "role_CND", "role_DRT", "role_IVR", "role_IVE", "role_OWN", "role_FMO", "role_PRF", "role_PRO", "role_PRN",
-            "has_pages", "hasPart", "isPartOf", "decade", "quarter_century", "half_century", "century", "subject", "digital_surrogats", "hasInstance", "instanceof",
-            "description", "coverage"
-         ]
-         @facet_fields = ['genre','archive','freeculture', 'has_full_text', 'federation', 'typewright', 'doc_type', 'discipline', 'role']
+				"role_ARC", "role_BND", "role_BKD", "role_BKP", "role_CLL", "role_CTG", "role_COL", "role_CLR", "role_CWT", "role_COM", "role_CMT",
+				"role_DUB", "role_FAC", "role_ILU", "role_ILL", "role_LTG", "role_PRT", "role_POP", "role_PRM",
+				"role_RPS", "role_RBR", "role_SCR", "role_SCL", "role_TYD", "role_TYG", "role_WDE", "role_WDC",
+				"role_BRD", "role_CNG", "role_CND", "role_DRT", "role_IVR", "role_IVE", "role_OWN", "role_FMO", "role_PRF", "role_PRO", "role_PRN",
+				"has_pages", "hasPart", "isPartOf", "decade", "quarter_century", "half_century", "century", "subject","subject_uri", "digital_surrogats",
+		 		"hasInstance", "instanceof", "description",
+			  "coverage", "titleOfResource", "abbreviatedTitle", "titleProperOfSeries", "variantTitle", "earlierTitleProper",
+			  "editionStatement", "noteOnFrequency", "format", "type", "created", "issuer", "publisher", "rights", "language",
+			  "isReferencedBy", "shelfMark", "subjectFacet", 'doc_type']
+
+         @facet_fields = ['genre','archive','freeculture', 'has_full_text',
+													'federation', 'typewright', 'doc_type',
+													"subject","subject_uri", "digital_surrogats",
+													"hasInstance", "instanceof", "description",
+													"coverage", "titleOfResource", "abbreviatedTitle",
+													"titleProperOfSeries", "variantTitle", "earlierTitleProper",
+													"editionStatement", "noteOnFrequency", "format", "type",
+													"created", "issuer", "publisher", "rights", "language",
+													"isReferencedBy", "shelfMark", 'role', 'discipline', 'role_RPS', 'role_AUT', 'role_OWN', 'year', 'subjectFacet']
+													# 'discipline', 'role', 'shelfMark']
       end
    end
 
@@ -129,7 +141,8 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		if prefix
 			if prefix != ""
 				options["facet.method"] = 'enum'
-				options["facet.prefix"] = prefix
+				options["facet.contains"] = prefix
+				options["facet.contains.ignoreCase"] = true
 			end
 			options["facet.missing"] = false
 		else
@@ -205,9 +218,9 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 
 	def modify_object(params)
 		if params[:operation] == 'replace'
-			response = `curl #{SOLR_URL}/#{@core}/update -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"set":"#{params[:value]}"}}]' 2> /dev/null`	
+			response = `curl #{SOLR_URL}/#{@core}/update?commit=true -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"set":"#{params[:value]}"}}]' 2> /dev/null`
 		elsif params[:operation] == 'append'
-			response = `curl #{SOLR_URL}/#{@core}/update -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"add":"#{params[:value]}"}}]' 2> /dev/null`
+			response = `curl #{SOLR_URL}/#{@core}/update?commit=true -H 'Content-type:application/json' -d '[{"uri":"#{params[:uri]}","#{params[:field]}":{"add":"#{params[:value]}"}}]' 2> /dev/null`
 		end
 
 		response = JSON.parse(response)
@@ -243,36 +256,37 @@ puts ("SOLR_URL::: #{SOLR_URL}")
 		end
 	end
 
-	def process_fq(options)
-		# do separate 'fq' fields for each and add the tag var
-		if !options['fq'].blank?
-			# we can't split spaces that are quoted. We just want to split spaces that appear before + or -
-			options['fq'] = options['fq'].gsub(' +', '@+').gsub(' -', '@-')
-			fq = options['fq'].split('@')
-			# we only want one field for all the federations, though. We need to put those back.
-			fed_idx = -1
-			fq.each_with_index { |op, i|
-				if op.include?("federation:")
-					if fed_idx == -1
-						fq[i] = '{!tag=fed}' + op
-						fed_idx = i
-					else
-						fq[fed_idx] += " OR #{op}"
-						fq[i] = nil
-					end
-				elsif op.include?("archive:")
-					fq[i] = '{!tag=arch}' + op
-				
-				end
-if op.include?("freeculture:")
-					fq[i] = nil
-end
-			}
-			fq.compact!
-			options['fq'] = fq
-		end
+  def process_fq(options)
+    # do separate 'fq' fields for each and add the tag var
+    if !options['fq'].blank?
+      # we can't split spaces that are quoted. We just want to split spaces that appear before + or -
+      options['fq'] = options['fq'].gsub(' +', '@+')
+      fq = options['fq'].split(/(?=@+|!\()/)
+      # we only want one field for all the federations, though. We need to put those back.
+      fed_idx = -1
+      fq.each_with_index { |op, i|
+        fq[i] = op = op.gsub('@+', '')
 
-	end
+        if op.include?("federation:")
+          if fed_idx == -1
+            fq[i] = '{!tag=fed}' + op
+            fed_idx = i
+          else
+            fq[fed_idx] += " OR #{op}"
+            fq[i] = nil
+          end
+        elsif op.include?("archive:")
+          fq[i] = '{!tag=arch}' + op
+        end
+        if op.include?("freeculture:")
+          fq[i] = nil
+        end
+      }
+      fq.compact!
+      options['fq'] = fq
+    end
+
+  end
 
 def search(options, overrides = {})
 	puts "SOLR::::::::SEARCH"
@@ -419,6 +433,35 @@ end
 		end
 	end
 
+  def fetch_shelfmark_for_uris(results, remote_ip)
+    copies = results['hasInstance']
+    return results if copies.nil? || copies.length <= 0
+    results['shelf_mark_copies'] = []
+    fields = ['uri', 'shelfMark', 'role_RPS']
+    shelfmarks = []
+    copies.each do |uri|
+      query_params = QueryFormat.details_format()
+      query = QueryFormat.create_solr_query(query_params, {"uri" => uri}, remote_ip)
+      options = add_field_list_param(query, fields)
+      response = select(options)
+
+      if response && response['response'] && response['response']['docs'] && response['response']['docs'].length > 0
+				library_name = response['response']['docs'].first['role_RPS'][0] if response['response']['docs'].first['role_RPS'].present?
+				
+        if response['response']['docs'].first['shelfMark'] && response['response']['docs'].first['shelfMark'] != '[Shelfmark not available]'
+					library_name_with_shelf_mark = response['response']['docs'].first['shelfMark']
+					library_name_with_shelf_mark = "#{library_name} - #{response['response']['docs'].first['shelfMark']}"
+					results['shelf_mark_copies'] << [uri, library_name_with_shelf_mark]
+				else
+					library_name_with_shelf_mark = uri.split('/').last
+					library_name_with_shelf_mark = "#{library_name} - #{uri.split('/').last}" if library_name.present?
+          results['shelf_mark_copies'] << [uri, library_name_with_shelf_mark]
+        end
+      end
+    end
+    results
+  end
+
 	def full_object(uri)
 		begin
 			return self.details({ q: "uri:#{uri}" }, { field_list: [ '*' ], quiet: true })
@@ -434,7 +477,6 @@ end
 		# make the facets more convenient. They are returned as a hash, with each key being the facet type.
 		# Then the value is an array. The values of the array alternate between the name of the facet and the
 		# count of the number of objects that match it. There is also a nil value that needs to be ignored.
-
 		facets = {}
 		if ret && ret['facet_counts'] && ret['facet_counts']['facet_fields']
 			ret['facet_counts']['facet_fields'].each { |key,raw_list|

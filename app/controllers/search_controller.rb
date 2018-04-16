@@ -1,6 +1,11 @@
 # encoding: utf-8
 
 class SearchController < ApplicationController
+
+  before_action :map_field_for_autocomplete, only: [:autocomplete]
+  before_action :set_actions, only: [:index]
+  before_action :add_default_fq, only: [:index]
+
 	# GET /searches
 	# GET /searches.xml
 	def index
@@ -18,6 +23,7 @@ class SearchController < ApplicationController
 			QueryFormat.transform_raw_parameters(params)
 			puts "Past call to transform_raw_parameters"
 			puts params
+
 			# NOTES: When a search is fuzzy, the query string is not analyzed by solr.
 			# This means (among other things) no stemming is done. Since
 			# stemming happens at index-time, this can often result in no matches being found
@@ -38,7 +44,6 @@ class SearchController < ApplicationController
      			extra_query = "content:#{orig_term}^80"
      	   end
 
-     	   extra_fq = ""
          if params.has_key?(:fuz_t)
             original_t = params[:t]
             orig_prefix = original_t[0]
@@ -46,7 +51,7 @@ class SearchController < ApplicationController
             stemmed_term = Stemmer::stem_word(orig_term)
             stemmed_term.force_encoding("UTF-8")
             params[:t] = "#{orig_prefix}#{stemmed_term}"
-            extra_fq = "title:#{orig_term}^80"
+            @extra_fq += "title:#{orig_term}^80"
          end
 
 			puts "Starting QueryFormat.create_solr_query"
@@ -54,12 +59,13 @@ class SearchController < ApplicationController
 			puts "Finished QueryFormat.create_solr_query"
 
 			if !extra_query.blank?
-			   q=query['q']
-			   query['q'] = "#{extra_query} #{q}"
+			  q=query['q']
+			  query['q'] = "#{extra_query} #{q}"
 			end
-			if !extra_fq.blank?
-            fq=query['fq']
-            query['fq'] = "#{extra_fq} #{fq}"
+
+      if !@extra_fq.blank?
+        fq=query['fq']
+        query['fq'] = "#{@extra_fq} #{fq}"
       end
 
 			is_test = Rails.env == 'test' ? :test : :live
@@ -115,7 +121,6 @@ class SearchController < ApplicationController
 			max = query['max'].to_i
 			query.delete('max')
 			words = solr.auto_complete(query)
-			words.sort! { |a,b| b[:count] <=> a[:count] }
 			words = words[0..(max-1)]
 			@results = words.map { |word|
 				{ :item => word[:name], :occurrences => word[:count] }
@@ -208,6 +213,7 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 			solr = Solr.factory_create(is_test)
 			puts "33--------------------- #{query}"
 			@document = solr.details(query)
+      @document = solr.fetch_shelfmark_for_uris(@document, request.remote_ip)
 
 			respond_to do |format|
 				format.html # index.html.erb
@@ -241,5 +247,49 @@ puts "request.remote_ip:: -------------------------------- #{request.remote_ip}"
 			format.xml  # modify.xml.builder
 		end
 	end
+
+  private
+  def map_field_for_autocomplete
+    fields = {
+      'record_format' => 'format'
+    }
+
+    params[:field] = fields[params[:field]] || params[:field]
+  end
+
+  def set_actions
+    if params.has_key?(:u_action)
+      @orphan = params[:orphan]
+      @user_action = params[:u_action]
+      params.delete(:u_action)
+      params.delete(:orphan)
+    elsif params.has_key?(:match_holding)
+      @match_holding = params[:match_holding]
+      params.delete(:match_holding)
+    end
+  end
+
+  def add_default_fq
+    @extra_fq = ""
+    if @match_holding || params.has_key?(:fuz_q)
+      @extra_fq += "-hasInstance:[* TO *]"
+      @extra_fq += "-instanceof:[* TO *]"
+    elsif @user_action == 'match_holding_match'
+      @extra_fq += "hasInstance:[* TO *]"
+
+    elsif @user_action == 'match'
+      if @orphan == 'true'
+        @extra_fq += "hasInstance:[* TO *]"
+      else
+        @extra_fq += "-hasInstance:[* TO *]"
+        @extra_fq += "-instanceof:[* TO *]"
+      end
+
+    elsif params.has_key?(:r_own) || params.has_key?(:r_rps)
+      @extra_fq += "instanceof:[* TO *]"
+    else
+      @extra_fq += "-instanceof:[* TO *]"
+    end
+  end
 
 end

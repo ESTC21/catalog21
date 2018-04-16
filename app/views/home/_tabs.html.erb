@@ -114,7 +114,7 @@
 	</p>
 	<p>Call <span class="code">/search/autocomplete.xml</span> with the following parameters:</p>
 	<%= render :partial => 'params', :locals => { :params => @autocomplete_params } %>
-	<p>Example: Auto-complete "tre" (top 25 results): <%= example_link("/search/autocomplete.xml?frag=tre&max=25") %></p>
+	<p>Example: Auto-complete "tre" (top 25 results): <%= example_link("/search/autocomplete.xml?frag=tre&max=25&field=title_sort") %></p>
 	<p>The output format is described in this <%= link_to "XSD", "/xsd/autocomplete_results.xsd", { :class => 'example_link' } %></p>
 </div>
 
@@ -136,7 +136,7 @@
 	</p>
 	<p>Call <span class="code">/search/details.xml</span> with the following parameters:</p>
 	<%= render :partial => 'params', :locals => { :params => @uri_params } %>
-	<p>Example: A document by Whitman: <%= example_link("/search/details.xml?uri=http%3a%2f%2fwww%2ewhitmanarchive%2eorg%2fcriticism%2freviews%2fleaves%2fleaves55%2fdailytimes") %></p>
+	<p>Example: A document by Whitman: <%= example_link("/search/details.xml?uri=http://estc.bl.uk/N12210") %></p>
 	<p>The output format is described in this <%= link_to "XSD", "/xsd/search_results.xsd", { :class => 'example_link' } %></p>
 </div>
 
@@ -158,7 +158,7 @@
 <div id="tab_exhibits" class="individual_tab">
 	<h3>Exhibits</h3>
 	<p>Exhibits can be indexed like this:</p>
-	<p><%= example_link("/exhibits.xml") %></p>
+	<p><%= example_link("/exhibits.xml?federation=ESTC") %></p>
 </div>
 
 <% elsif params[:tab] == 'user_content' && user_signed_in? %>
@@ -166,7 +166,7 @@
 	<h3>User Content</h3>
 	<p>A secondary index can be read and written from too:</p>
 	<%= render :partial => 'params', :locals => { :params => @locals_params } %>
-	<p>Example: <%= example_link("/locals.xml?q=%2brossetti&section=community&object_type=Exhibit&federation=NINES") %></p>
+	<p>Example: <%= link_to "/locals.xml?q=brossetti&object_type=Exhibit&federation=ESTC", "/locals.xml?q=brossetti&object_type=Exhibit&federation=ESTC" %></p>
 	<p>The output format is described in this <%= link_to "XSD", "/xsd/locals_results.xsd", { :class => 'example_link' } %></p>
 </div>
 
